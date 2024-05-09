@@ -8,10 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class Signup extends AppCompatActivity {
 
+    Toolbar toolbar;
     EditText fullName, email, username, password, rePass;
     Button signup;
     TextView login;
@@ -22,6 +25,9 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        toolbar = findViewById(R.id.tb);
+        setSupportActionBar(toolbar);
 
         fullName = findViewById(R.id.etFullName);
         email = findViewById(R.id.etEmail);
@@ -42,8 +48,8 @@ public class Signup extends AppCompatActivity {
 
                 if (name.isEmpty() || mail.isEmpty() || user_name.isEmpty() || pass.isEmpty() || re_Pass.isEmpty())
                 {
-                    Toast.makeText(Signup.this, "Please enter all fields.", Toast.LENGTH_SHORT).show();
-//                    fullName.setError("You must enter your full name to register");
+//                  Toast.makeText(Signup.this, "Please enter all fields.", Toast.LENGTH_SHORT).show();
+                    fullName.setError("You must enter your full name to register");
                 }
                 else if (!re_Pass.equals(pass))
                 {
