@@ -12,6 +12,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
 public class Signup extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -19,6 +22,8 @@ public class Signup extends AppCompatActivity {
     Button signup;
     TextView login;
     String name, mail, user_name, pass, re_Pass;
+
+    Connection connect;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -57,6 +62,7 @@ public class Signup extends AppCompatActivity {
                 }
                 else
                 {
+                    createAccount(name, mail, user_name, pass);
                     Toast.makeText(Signup.this, "Successfully signed up!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Signup.this, LoginActivity.class);
                     startActivity(intent);
@@ -71,6 +77,26 @@ public class Signup extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+
+    public void createAccount(String name, String mail, String username, String pass)
+    {
+        try {
+            connect = DatabaseConnector.connect();
+            PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO user (username, password, name, email) VALUES (" + username + "," + pass + "," + name + "," + mail + ")");
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, pass);
+            preparedStatement.setString(3, name);
+            preparedStatement.setString(4, mail);
+            int rowsAffected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+        }
+        catch (Exception e)
+        {
+            e.getMessage();
+        }
 
     }
 }
