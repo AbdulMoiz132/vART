@@ -1,19 +1,33 @@
 package com.example.vart;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Signup extends AppCompatActivity {
 
@@ -23,7 +37,7 @@ public class Signup extends AppCompatActivity {
     TextView login;
     String name, mail, user_name, pass, re_Pass;
 
-    Connection connect;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -42,6 +56,7 @@ public class Signup extends AppCompatActivity {
         signup = findViewById(R.id.btnSignup);
         login = findViewById(R.id.tvLogin);
 
+
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,21 +66,27 @@ public class Signup extends AppCompatActivity {
                 pass = password.getText().toString().trim();
                 re_Pass = rePass.getText().toString().trim();
 
-                if (name.isEmpty() || mail.isEmpty() || user_name.isEmpty() || pass.isEmpty() || re_Pass.isEmpty())
-                {
+                if (name.isEmpty() || mail.isEmpty() || user_name.isEmpty() || pass.isEmpty() || re_Pass.isEmpty()) {
 //                  Toast.makeText(Signup.this, "Please enter all fields.", Toast.LENGTH_SHORT).show();
                     fullName.setError("You must enter your full name to register");
-                }
-                else if (!re_Pass.equals(pass))
-                {
+                } else if (!re_Pass.equals(pass)) {
                     Toast.makeText(Signup.this, "Passwords do not match! Try again.", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    createAccount(name, mail, user_name, pass);
-                    Toast.makeText(Signup.this, "Successfully signed up!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Signup.this, LoginActivity.class);
-                    startActivity(intent);
+                } else {
+                    try {
+                        Map<String, Object> user = new HashMap<>();
+                        user.put("name", name);
+                        user.put("email", mail);
+                        user.put("username", user_name);
+                        user.put("password", pass);
+                        db.collection("users").add(user);
+                        Toast.makeText(Signup.this, "Successfully signed up!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Signup.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    catch(Exception e)
+                    {
+                        Toast.makeText(Signup.this, "System Error. Please try Again", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -77,26 +98,6 @@ public class Signup extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-    }
-
-    public void createAccount(String name, String mail, String username, String pass)
-    {
-        try {
-            connect = DatabaseConnector.connect();
-            PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO user (username, password, name, email) VALUES (" + username + "," + pass + "," + name + "," + mail + ")");
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, pass);
-            preparedStatement.setString(3, name);
-            preparedStatement.setString(4, mail);
-            int rowsAffected = preparedStatement.executeUpdate();
-            preparedStatement.close();
-
-        }
-        catch (Exception e)
-        {
-            e.getMessage();
-        }
 
     }
 }

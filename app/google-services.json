@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1070483688202",
+    "project_id": "vart-2329a",
+    "storage_bucket": "vart-2329a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070483688202:android:ace278df0b921d63c848f3",
+        "android_client_info": {
+          "package_name": "com.example.vart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcQLSu5AaMZY4H9-GjFwmLrkRlC2w-GUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
