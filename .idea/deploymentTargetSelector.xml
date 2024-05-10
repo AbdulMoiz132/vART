@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="VART">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-05-09T17:15:46.273385900Z">
+        <DropdownSelection timestamp="2024-05-09T20:42:08.520783400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\kumar\.android\avd\Pixel_8_API_34.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=102622537C000036" />
             </handle>
           </Target>
         </DropdownSelection>
