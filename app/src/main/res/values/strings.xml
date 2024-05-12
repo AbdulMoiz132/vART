@@ -25,4 +25,8 @@
     <string name="_0">0</string>
     <string name="follow">Follow</string>
     <string name="become_a_creator">Become a creator</string>
+    <string name="enter_new_name">Enter new name</string>
+    <string name="change_name">CHANGE NAME</string>
+    <string name="enter_new_username">Enter new username</string>
+    <string name="change_username">CHANGE USERNAME</string>
 </resources>

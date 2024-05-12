@@ -36,10 +36,16 @@ public class LoginActivity extends AppCompatActivity {
 
     String user_name, pass;
 
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Logging in...");
+        progressDialog.setCancelable(false);
 
         FirebaseApp.initializeApp(this);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -53,7 +59,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                user_name = username.getText().toString();
+                progressDialog.show();
+                user_name = username.getText().toString().trim();
                 pass = password.getText().toString();
 
                 if(user_name.isEmpty())
@@ -75,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     if (!queryDocumentSnapshots.isEmpty()) {
+                                        progressDialog.dismiss();
                                         Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                         intent.putExtra("username", user_name);
@@ -82,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         // User not found or password incorrect
+                                        progressDialog.dismiss();
                                         Log.d(TAG, "Login failed");
                                         Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
                                     }
@@ -102,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, Signup.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
