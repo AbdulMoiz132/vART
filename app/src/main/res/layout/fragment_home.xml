@@ -1,13 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <!-- Trending Arts -->
+        <TextView
+            android:id="@+id/trendingArtsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trending Arts"
+            android:textSize="18sp"
+            android:padding="16dp"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trendingArtsRecyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"/>
+
+        <!-- Top Artists -->
+        <TextView
+            android:id="@+id/topArtistsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Top Artists"
+            android:textSize="18sp"
+            android:padding="16dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/topArtistsRecyclerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:orientation="horizontal"/>
+
+
+        <!-- Followed Artists -->
+        <TextView
+            android:id="@+id/followedArtistsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Artists You Follow"
+            android:textSize="18sp"
+            android:padding="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/followedArtistsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"/>
+
+    </LinearLayout>
 </ScrollView>

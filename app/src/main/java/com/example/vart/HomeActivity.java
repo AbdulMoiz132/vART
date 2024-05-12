@@ -22,10 +22,14 @@ public class HomeActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frameLayout;
 
+    String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        username = getIntent().getStringExtra("username");
 
         bottomNavigationView = findViewById(R.id.bottomNav);
         frameLayout = findViewById(R.id.frameLayout);
