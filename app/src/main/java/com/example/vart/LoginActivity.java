@@ -2,6 +2,9 @@ package com.example.vart;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.ActionBar;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,8 +75,9 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     if (!queryDocumentSnapshots.isEmpty()) {
-                                        Log.d(TAG, "Login successful");
+                                        Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                        intent.putExtra("username", user_name);
                                         startActivity(intent);
                                         finish();
                                     } else {
