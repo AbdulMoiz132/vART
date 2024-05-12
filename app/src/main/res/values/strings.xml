@@ -16,4 +16,13 @@
     <string name="profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="number">Number</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="arts">Arts</string>
+    <string name="profile_name">Full name</string>
+    <string name="bio">Bio</string>
+    <string name="_0">0</string>
+    <string name="follow">Follow</string>
+    <string name="become_a_creator">Become a creator</string>
 </resources>

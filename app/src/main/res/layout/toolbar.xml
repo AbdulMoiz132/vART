@@ -19,7 +19,6 @@
             android:textColor="@color/white"
             android:textSize="28sp"
             android:gravity="center_vertical"
-            android:textStyle="bold"
             app:drawableLeftCompat="@drawable/logo_small"
             android:drawablePadding="5dp"/>
 
