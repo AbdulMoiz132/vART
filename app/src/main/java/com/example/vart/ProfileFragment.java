@@ -42,8 +42,8 @@ public class ProfileFragment extends Fragment {
     ProgressDialog progressDialog;
     private static final int EDIT_NAME_REQUEST = 1;
     private static final int EDIT_BIO_REQUEST = 2;
-
     private static final int CHANGE_PASSWORD_REQUEST = 3;
+    private static final int UPDATE_PROFILE_PIC_REQUEST = 4;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

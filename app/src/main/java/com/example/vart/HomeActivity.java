@@ -37,8 +37,8 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseFirestore db;
     private static final int EDIT_NAME_REQUEST = 1;
     private static final int EDIT_BIO_REQUEST = 2;
-
     private static final int CHANGE_PASSWORD_REQUEST = 3;
+    private static final int UPDATE_PROFILE_PIC_REQUEST = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if ((requestCode == EDIT_NAME_REQUEST || requestCode == EDIT_BIO_REQUEST || requestCode == CHANGE_PASSWORD_REQUEST) && resultCode == RESULT_OK)
+        if ((requestCode == EDIT_NAME_REQUEST || requestCode == EDIT_BIO_REQUEST || requestCode == CHANGE_PASSWORD_REQUEST || requestCode == UPDATE_PROFILE_PIC_REQUEST) && resultCode == RESULT_OK)
         {
             bottomNavigationView.setSelectedItemId(R.id.navProfile);
         }
