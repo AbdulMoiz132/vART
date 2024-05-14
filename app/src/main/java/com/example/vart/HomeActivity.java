@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,13 +18,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class HomeActivity extends AppCompatActivity {
@@ -36,8 +32,13 @@ public class HomeActivity extends AppCompatActivity {
     String username, fullName;
     private Toolbar toolbar;
     private TextView toolbarTitle;
+    boolean isArtist;
     Bundle profileBundle;
     FirebaseFirestore db;
+    private static final int EDIT_NAME_REQUEST = 1;
+    private static final int EDIT_BIO_REQUEST = 2;
+
+    private static final int CHANGE_PASSWORD_REQUEST = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,21 +74,6 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
 
-        db.collection("artist").whereEqualTo("username", username)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        boolean isArtist = !queryDocumentSnapshots.isEmpty();
-                        profileBundle.putBoolean("isArtist", isArtist);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error querying user", e);
-                    }
-                });
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -132,5 +118,14 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.frameLayout, fragment);
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == EDIT_NAME_REQUEST || requestCode == EDIT_BIO_REQUEST || requestCode == CHANGE_PASSWORD_REQUEST) && resultCode == RESULT_OK)
+        {
+            bottomNavigationView.setSelectedItemId(R.id.navProfile);
+        }
     }
 }

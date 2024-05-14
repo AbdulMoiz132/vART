@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#121212"
-    tools:context=".EditUsername">
+    android:background="@color/black"
+    tools:context=".EditBio">
 
     <include
         android:id="@+id/tb"
@@ -20,43 +20,44 @@
         android:padding="40dp">
 
         <TextView
-            android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:padding="5dp"
-            android:text="@string/enter_new_username" />
+            android:text="@string/enter_bio" />
 
         <EditText
-            android:id="@+id/etUsername"
+            android:id="@+id/bio"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/custom_edit_text"
-            android:drawableStart="@drawable/person"
+            android:drawableStart="@drawable/pencil"
+            android:drawableTint="@color/black"
             android:drawablePadding="10dp"
-            android:hint="@string/username"
+            android:hint="@string/bio"
             android:importantForAutofill="no"
             android:inputType="text"
-            android:padding="8dp"
+            android:padding="12dp"
             android:textColor="#999999"
             android:textColorHighlight="@color/cardview_light_background"
             android:textColorHint="#999999"
             android:elevation="5dp"/>
 
         <Button
-            android:id="@+id/btnSignup"
+            android:id="@+id/updateBio"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="300dp"
             android:backgroundTint="#FF50B5"
             android:textColor="@color/white"
-            android:text="@string/change_username"
+            android:text="@string/update_bio"
             android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
+
 
 </LinearLayout>

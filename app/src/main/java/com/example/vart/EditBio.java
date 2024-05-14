@@ -1,7 +1,6 @@
 package com.example.vart;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,10 +21,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditName extends AppCompatActivity {
+public class EditBio extends AppCompatActivity {
 
-    EditText fullName;
-    Button changeName;
+    EditText bio;
+    Button updateBio;
     String username;
     FirebaseFirestore db;
     ProgressDialog progressDialog;
@@ -33,42 +32,41 @@ public class EditName extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_name);
+        setContentView(R.layout.activity_edit_bio);
 
         username = getIntent().getStringExtra("username");
 
-        fullName = findViewById(R.id.etFullName);
-        changeName = findViewById(R.id.btnChangeName);
+        bio = findViewById(R.id.bio);
+        updateBio = findViewById(R.id.updateBio);
 
         db = FirebaseFirestore.getInstance();
 
-        progressDialog = new ProgressDialog(EditName.this);
-        progressDialog.setMessage("Updating name...");
+        progressDialog = new ProgressDialog(EditBio.this);
+        progressDialog.setMessage("Updating bio...");
         progressDialog.setCancelable(false);
 
-        changeName.setOnClickListener(new View.OnClickListener() {
+        updateBio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = fullName.getText().toString();
+                String bioText = bio.getText().toString();
 
-                if (name.isEmpty()) {
-                    fullName.setError("Name is required");
-                    return;
+                if (bioText.isEmpty()) {
+                    bio.setError("Bio cannot be empty");
                 }
                 else
                 {
                     progressDialog.show();
 
                     Map<String, Object> newData = new HashMap<>();
-                    newData.put("name", name);
+                    newData.put("bio", bioText);
 
-                    db.collection("users").document(username)
+                    db.collection("artist").document(username)
                             .update(newData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     progressDialog.dismiss();
-                                    Toast.makeText(EditName.this, "Name updated successfully!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(EditBio.this, "Bio updated successfully!", Toast.LENGTH_SHORT).show();
 
                                     setResult(RESULT_OK);
                                     finish();
@@ -78,14 +76,11 @@ public class EditName extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     progressDialog.dismiss();
-                                    Toast.makeText(EditName.this, "Failed to update name. Please try again.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(EditBio.this, "Failed to update bio. Please try again.", Toast.LENGTH_SHORT).show();
                                 }
                             });
-
                 }
-
             }
         });
-
     }
 }

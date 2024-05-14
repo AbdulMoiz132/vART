@@ -7,7 +7,7 @@
     <string name="sign_up">SIGN UP</string>
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
-    <string name="confirm_password">Confirm Password</string>
+    <string name="confirm_password">Confirm password</string>
     <string name="already_have_an_account">ALREADY HAVE AN ACCOUNT?</string>
     <string name="create_your_account">CREATE YOUR ACCOUNT</string>
     <string name="home">Home</string>
@@ -29,4 +29,14 @@
     <string name="change_name">CHANGE NAME</string>
     <string name="enter_new_username">Enter new username</string>
     <string name="change_username">CHANGE USERNAME</string>
+    <string name="delete_account">Delete account</string>
+    <string name="logout">Logout</string>
+    <string name="change_password">Change password</string>
+    <string name="edit_name">Edit name</string>
+    <string name="enter_new_password">Enter new password</string>
+    <string name="enter_current_password">Enter current password</string>
+    <string name="btn_change_pass">CHANGE PASSWORD</string>
+    <string name="edit_bio">Edit bio</string>
+    <string name="enter_bio">Enter Bio</string>
+    <string name="update_bio">UPDATE BIO</string>
 </resources>
