@@ -39,4 +39,6 @@
     <string name="edit_bio">Edit bio</string>
     <string name="enter_bio">Enter Bio</string>
     <string name="update_bio">UPDATE BIO</string>
+    <string name="upload_picture">UPLOAD PICTURE</string>
+    <string name="select_profile_picture">Select profile picture</string>
 </resources>

@@ -1,17 +1,12 @@
 package com.example.vart;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,17 +22,19 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
 
     FirebaseFirestore db;
-    ImageView profilePic;
+    ImageView profilePic, editProfilePic;
     TextView name, followerCount, followingCount, artCount, becomeArtist, artistBio;
     View  bio, followers, arts, artistPrivilege;
-    String username, fullName, bioText;
+    String username, fullName, profile, bioText;
     boolean isArtist;
     ProgressDialog progressDialog;
     private static final int EDIT_NAME_REQUEST = 1;
@@ -50,6 +47,7 @@ public class ProfileFragment extends Fragment {
         View rootView =  inflater.inflate(R.layout.fragment_profile, container, false);
 
         profilePic = rootView.findViewById(R.id.profilePic);
+        editProfilePic = rootView.findViewById(R.id.editProfilePic);
         name = rootView.findViewById(R.id.profileName);
         bio = rootView.findViewById(R.id.bio);
         followerCount = rootView.findViewById(R.id.followerCount);
@@ -64,11 +62,13 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             username = getArguments().getString("username");
             fullName = getArguments().getString("fullName");
+            profile = getArguments().getString("profile");
         }
 
         db = FirebaseFirestore.getInstance();
 
         // progress dialogue for becoming a creator
+        //noinspection deprecation
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("");
         progressDialog.setCancelable(false);
@@ -76,6 +76,11 @@ public class ProfileFragment extends Fragment {
         if (fullName != null)
         {
             name.setText(fullName);
+        }
+
+        if (!Objects.equals(profile, "null"))
+        {
+            Picasso.get().load(profile).placeholder(R.drawable.default_profile).into(profilePic);
         }
 
         db.collection("artist")
@@ -124,6 +129,16 @@ public class ProfileFragment extends Fragment {
             arts.setVisibility(View.GONE);
             artistPrivilege.setVisibility(View.GONE);
         }
+
+        editProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), UpdateProfilePic.class);
+                intent.putExtra("username", username);
+                intent.putExtra("profile", profile);
+                startActivityForResult(intent, UPDATE_PROFILE_PIC_REQUEST);
+            }
+        });
 
         becomeArtist.setOnClickListener(new View.OnClickListener() {
             @Override

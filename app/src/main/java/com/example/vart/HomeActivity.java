@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frameLayout;
 
-    String username, fullName;
+    String username, fullName, profile;
     private Toolbar toolbar;
     private TextView toolbarTitle;
     boolean isArtist;
@@ -66,7 +66,9 @@ public class HomeActivity extends AppCompatActivity {
                             if (document.getString("name") != null)
                             {
                                 fullName = document.getString("name");
+                                profile = document.getString("profile");
                                 profileBundle.putString("fullName", fullName);
+                                profileBundle.putString("profile", profile);
                             }
                         }
                     } else {
