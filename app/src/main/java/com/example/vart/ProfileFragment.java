@@ -62,7 +62,9 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             username = getArguments().getString("username");
             fullName = getArguments().getString("fullName");
+            isArtist = getArguments().getBoolean("isArtist");
             profile = getArguments().getString("profile");
+
         }
 
         db = FirebaseFirestore.getInstance();
@@ -83,23 +85,8 @@ public class ProfileFragment extends Fragment {
             Picasso.get().load(profile).placeholder(R.drawable.default_profile).into(profilePic);
         }
 
-        db.collection("artist")
-                .whereEqualTo("username", username)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        isArtist = !queryDocumentSnapshots.isEmpty();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Error fetching user data", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
         if (isArtist) {
+            Toast.makeText(getContext(), "User is an artist", Toast.LENGTH_SHORT).show();
             db.collection("artist").whereEqualTo("username", username)
                     .get()
                     .addOnCompleteListener(task -> {
@@ -110,10 +97,10 @@ public class ProfileFragment extends Fragment {
                                     bioText = document.getString("bio");
                                     artistBio.setText(bioText);
                                     bio.setVisibility(View.VISIBLE);
+                                } else {
+                                    bio.setVisibility(View.GONE);
                                 }
                             }
-                        } else {
-                            bio.setVisibility(View.GONE);
                         }
                     });
 
@@ -123,6 +110,7 @@ public class ProfileFragment extends Fragment {
             artistPrivilege.setVisibility(View.VISIBLE);
 
         } else {
+            Toast.makeText(getContext(), "User is not an artist", Toast.LENGTH_SHORT).show();
             becomeArtist.setVisibility(View.VISIBLE);
             bio.setVisibility(View.GONE);
             followers.setVisibility(View.GONE);
