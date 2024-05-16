@@ -52,16 +52,17 @@
                             android:id="@+id/editCard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:cardCornerRadius="8dp"
+                            app:cardCornerRadius="50dp"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentBottom="true"
                             app:cardElevation="10dp">
 
                             <ImageView
+                                android:id="@+id/editProfilePic"
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
-                                android:backgroundTint="#FF50B5"
-                                android:background="#FF50B5"
+                                android:backgroundTint="#007AFF"
+                                android:background="#007AFF"
                                 android:src="@drawable/pencil"
                                 tools:ignore="contentDescription" />
 

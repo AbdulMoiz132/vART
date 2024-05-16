@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +30,7 @@ public class HomeActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frameLayout;
 
-    String username, fullName;
+    String username, fullName, profile;
     private Toolbar toolbar;
     private TextView toolbarTitle;
     boolean isArtist;
@@ -66,7 +67,9 @@ public class HomeActivity extends AppCompatActivity {
                             if (document.getString("name") != null)
                             {
                                 fullName = document.getString("name");
+                                profile = document.getString("profile");
                                 profileBundle.putString("fullName", fullName);
+                                profileBundle.putString("profile", profile);
                             }
                         }
                     } else {
@@ -97,6 +100,8 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    isUserArtist();
+                    profileBundle.putBoolean("isArtist", isArtist);
                     ProfileFragment profile = new ProfileFragment();
                     profile.setArguments(profileBundle);
                     toolbarTitle.setText(username);
@@ -127,5 +132,25 @@ public class HomeActivity extends AppCompatActivity {
         {
             bottomNavigationView.setSelectedItemId(R.id.navProfile);
         }
+    }
+
+    private void isUserArtist()
+    {
+        db.collection("artist")
+                .whereEqualTo("username", username)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Toast.makeText(HomeActivity.this, "User is confirmed an artist", Toast.LENGTH_SHORT).show();
+                        isArtist = !queryDocumentSnapshots.isEmpty();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(HomeActivity.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

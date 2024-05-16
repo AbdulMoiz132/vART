@@ -11,7 +11,11 @@ googleGmsGoogleServices = "4.4.1"
 firebaseFirestore = "25.0.0"
 firebaseDatabase = "21.0.0"
 firebaseStorage = "21.0.0"
+<<<<<<< HEAD
 picasso = "2"
+=======
+picasso = "2.8"
+>>>>>>> 22b8cd244e768901c781890bf0a60a187f5ed8f3
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }

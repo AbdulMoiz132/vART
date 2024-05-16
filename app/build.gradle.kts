@@ -28,6 +28,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
+    dataBinding {
+        enable = true
+    }
 }
 
 
@@ -49,5 +57,9 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+<<<<<<< HEAD
     implementation("com.squareup.picasso:picasso:2.8")
+=======
+    implementation(libs.picasso)
+>>>>>>> 22b8cd244e768901c781890bf0a60a187f5ed8f3
 }
