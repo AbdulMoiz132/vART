@@ -83,7 +83,6 @@ public class HomeFragment extends Fragment {
                         recyclerView1.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
                         recyclerView1.setAdapter(trendingArtsAdapter);
                     } else {
-
                         // Handle errors
                     }
                 });
