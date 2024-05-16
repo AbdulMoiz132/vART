@@ -69,8 +69,8 @@ public class UpdateProfilePic extends AppCompatActivity {
     }
 
     private void uploadImage() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Uploading File....");
+        progressDialog = new ProgressDialog(UpdateProfilePic.this);
+        progressDialog.setTitle("Updating Profile...");
         progressDialog.show();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA);

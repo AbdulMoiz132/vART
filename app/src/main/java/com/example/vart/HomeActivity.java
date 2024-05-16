@@ -40,15 +40,12 @@ public class HomeActivity extends AppCompatActivity {
     private static final int EDIT_BIO_REQUEST = 2;
     private static final int CHANGE_PASSWORD_REQUEST = 3;
     private static final int UPDATE_PROFILE_PIC_REQUEST = 4;
+    private static final int ADD_ART_REQUEST = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        username = getIntent().getStringExtra("username");
-        profileBundle = new Bundle();
-        profileBundle.putString("username", username);
 
         bottomNavigationView = findViewById(R.id.bottomNav);
         frameLayout = findViewById(R.id.frameLayout);
@@ -59,24 +56,12 @@ public class HomeActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        db.collection("users").whereEqualTo("username", username)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.getString("name") != null)
-                            {
-                                fullName = document.getString("name");
-                                profile = document.getString("profile");
-                                profileBundle.putString("fullName", fullName);
-                                profileBundle.putString("profile", profile);
-                            }
-                        }
-                    } else {
-                        // Handle errors
-                    }
-                });
+        username = getIntent().getStringExtra("username");
+        profileBundle = new Bundle();
+        profileBundle.putString("username", username);
+        isUserArtist();
 
+        getNameAndProfile();
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -101,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
                 else
                 {
                     isUserArtist();
-                    profileBundle.putBoolean("isArtist", isArtist);
+                    getNameAndProfile();
                     ProfileFragment profile = new ProfileFragment();
                     profile.setArguments(profileBundle);
                     toolbarTitle.setText(username);
@@ -128,28 +113,61 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if ((requestCode == EDIT_NAME_REQUEST || requestCode == EDIT_BIO_REQUEST || requestCode == CHANGE_PASSWORD_REQUEST || requestCode == UPDATE_PROFILE_PIC_REQUEST) && resultCode == RESULT_OK)
+        if ((requestCode == EDIT_NAME_REQUEST || requestCode == EDIT_BIO_REQUEST || requestCode == CHANGE_PASSWORD_REQUEST
+                || requestCode == UPDATE_PROFILE_PIC_REQUEST) && resultCode == RESULT_OK)
         {
             bottomNavigationView.setSelectedItemId(R.id.navProfile);
         }
+        if (requestCode == ADD_ART_REQUEST && resultCode == RESULT_OK)
+        {
+            bottomNavigationView.setSelectedItemId(R.id.navProfile);
+            // other things to do
+        }
     }
 
-    private void isUserArtist()
-    {
-        db.collection("artist")
-                .whereEqualTo("username", username)
+    private void isUserArtist() {
+        db.collection("artist").whereEqualTo("username", username)
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        Toast.makeText(HomeActivity.this, "User is confirmed an artist", Toast.LENGTH_SHORT).show();
-                        isArtist = !queryDocumentSnapshots.isEmpty();
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Check if any documents were returned
+                        if (!task.getResult().isEmpty()) {
+                            // User exists in the "artist" collection
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String bio = document.getString("bio");
+                                if (bio != null) {
+                                    profileBundle.putString("bio", bio);
+                                }
+                            }
+                            profileBundle.putBoolean("isArtist", true);
+                        } else {
+                            // User is not an artist
+                            profileBundle.putBoolean("isArtist", false);
+                        }
+                    } else {
+                        // Error handling
+                        Toast.makeText(HomeActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(HomeActivity.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void getNameAndProfile()
+    {
+        db.collection("users").whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.getString("name") != null)
+                            {
+                                fullName = document.getString("name");
+                                profile = document.getString("profile");
+                                profileBundle.putString("fullName", fullName);
+                                profileBundle.putString("profile", profile);
+                            }
+                        }
+                    } else {
+                        // Handle errors
                     }
                 });
     }

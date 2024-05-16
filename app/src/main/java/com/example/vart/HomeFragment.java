@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment {
                             TrendingArts trendingArts = new TrendingArts(imageRef, title);
                             trendingArtsArrayList.add(trendingArts);
                         }
+
                         trendingArtsAdapter = new TrendingArtsAdapter(requireContext(), trendingArtsArrayList);
                         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
                         recyclerView.setAdapter(trendingArtsAdapter);

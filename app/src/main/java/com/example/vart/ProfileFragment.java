@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ public class ProfileFragment extends Fragment {
 
     FirebaseFirestore db;
     ImageView profilePic, editProfilePic;
+    ImageButton addArt;
     TextView name, followerCount, followingCount, artCount, becomeArtist, artistBio;
     View  bio, followers, arts, artistPrivilege;
     String username, fullName, profile, bioText;
@@ -41,6 +43,7 @@ public class ProfileFragment extends Fragment {
     private static final int EDIT_BIO_REQUEST = 2;
     private static final int CHANGE_PASSWORD_REQUEST = 3;
     private static final int UPDATE_PROFILE_PIC_REQUEST = 4;
+    private static final int ADD_ART_REQUEST = 5;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class ProfileFragment extends Fragment {
         profilePic = rootView.findViewById(R.id.profilePic);
         editProfilePic = rootView.findViewById(R.id.editProfilePic);
         name = rootView.findViewById(R.id.profileName);
+        addArt = rootView.findViewById(R.id.addArt);
         bio = rootView.findViewById(R.id.bio);
         followerCount = rootView.findViewById(R.id.followerCount);
         followingCount = rootView.findViewById(R.id.followingCount);
@@ -64,7 +68,7 @@ public class ProfileFragment extends Fragment {
             fullName = getArguments().getString("fullName");
             isArtist = getArguments().getBoolean("isArtist");
             profile = getArguments().getString("profile");
-
+            bioText = getArguments().getString("bio");
         }
 
         db = FirebaseFirestore.getInstance();
@@ -80,29 +84,14 @@ public class ProfileFragment extends Fragment {
             name.setText(fullName);
         }
 
-        if (!Objects.equals(profile, "null"))
-        {
-            Picasso.get().load(profile).placeholder(R.drawable.default_profile).into(profilePic);
-        }
-
         if (isArtist) {
-            Toast.makeText(getContext(), "User is an artist", Toast.LENGTH_SHORT).show();
-            db.collection("artist").whereEqualTo("username", username)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (document.getString("bio") != null)
-                                {
-                                    bioText = document.getString("bio");
-                                    artistBio.setText(bioText);
-                                    bio.setVisibility(View.VISIBLE);
-                                } else {
-                                    bio.setVisibility(View.GONE);
-                                }
-                            }
-                        }
-                    });
+            if (!bioText.equals("null"))
+            {
+                artistBio.setText(bioText);
+                bio.setVisibility(View.VISIBLE);
+            } else {
+                bio.setVisibility(View.GONE);
+            }
 
             becomeArtist.setVisibility(View.GONE);
             followers.setVisibility(View.VISIBLE);
@@ -110,12 +99,16 @@ public class ProfileFragment extends Fragment {
             artistPrivilege.setVisibility(View.VISIBLE);
 
         } else {
-            Toast.makeText(getContext(), "User is not an artist", Toast.LENGTH_SHORT).show();
             becomeArtist.setVisibility(View.VISIBLE);
             bio.setVisibility(View.GONE);
             followers.setVisibility(View.GONE);
             arts.setVisibility(View.GONE);
             artistPrivilege.setVisibility(View.GONE);
+        }
+
+        if (!Objects.equals(profile, "null"))
+        {
+            Picasso.get().load(profile).placeholder(R.drawable.default_profile).into(profilePic);
         }
 
         editProfilePic.setOnClickListener(new View.OnClickListener() {
@@ -135,8 +128,8 @@ public class ProfileFragment extends Fragment {
 
                 Map<String, Object> user = new HashMap<>();
                 user.put("username", username);
-                user.put("bio", "");
-                user.put("follows", 0);
+                user.put("bio", "null");
+                user.put("followers", 0);
                 user.put("arts", 0);
 
                 db.collection("artist").document(username).set(user)
@@ -147,7 +140,6 @@ public class ProfileFragment extends Fragment {
                                 Toast.makeText(getContext(), "You are a creator now", Toast.LENGTH_SHORT).show();
 
                                 becomeArtist.setVisibility(View.GONE);
-                                bio.setVisibility(View.VISIBLE);
                                 followers.setVisibility(View.VISIBLE);
                                 arts.setVisibility(View.VISIBLE);
                                 artistPrivilege.setVisibility(View.VISIBLE);
@@ -161,6 +153,15 @@ public class ProfileFragment extends Fragment {
                                 Toast.makeText(getContext(), "Error occurred. Could not become a creator", Toast.LENGTH_SHORT).show();
                             }
                         });
+            }
+        });
+
+        addArt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), UploadArt.class);
+                intent.putExtra("username", username);
+                startActivityForResult(intent, ADD_ART_REQUEST);
             }
         });
 
