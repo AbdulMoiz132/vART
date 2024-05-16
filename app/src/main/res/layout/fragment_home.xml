@@ -1,29 +1,36 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <LinearLayout
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Trending Arts -->
-        <TextView
-            android:id="@+id/trendingArtsTitle"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Trending Arts"
-            android:textSize="18sp"
-            android:padding="16dp"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/trendingArtsRecyclerView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trending Arts"
+                android:textSize="18sp"
+                android:padding="16dp"/>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/trendingArtsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"/>
 
-        <!-- Top Artists -->
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
         <TextView
             android:id="@+id/topArtistsTitle"
             android:layout_width="match_parent"
@@ -41,6 +48,12 @@
 
 
         <!-- Followed Artists -->
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
         <TextView
             android:id="@+id/followedArtistsTitle"
             android:layout_width="match_parent"
@@ -55,5 +68,4 @@
             android:layout_height="wrap_content"
             android:padding="8dp"/>
 
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

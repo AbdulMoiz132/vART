@@ -114,6 +114,8 @@ public class Signup extends AppCompatActivity {
                                         user.put("email", mail);
                                         user.put("username", user_name);
                                         user.put("password", pass);
+                                        user.put("profile", "null");
+                                        user.put("following", 0);
 
                                         db.collection("users").document(user_name).set(user)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
