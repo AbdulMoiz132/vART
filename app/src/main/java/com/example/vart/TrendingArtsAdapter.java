@@ -1,6 +1,5 @@
 package com.example.vart;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +10,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 public class TrendingArtsAdapter extends RecyclerView.Adapter<TrendingArtsAdapter.TrendingArtsViewHolder> {
     private final ArrayList<TrendingArts> trendingArtsList; // Assuming each item is a URL to an image
-    private final Context context;
+    private OnArtClickListener listener;
 
-    public TrendingArtsAdapter(Context context, ArrayList<TrendingArts> trendingArtsList) {
-        this.context = context;
-        this.trendingArtsList = trendingArtsList;
+
+    public interface OnArtClickListener {
+        void onArtClick(TrendingArts art);
     }
 
+    public TrendingArtsAdapter(ArrayList<TrendingArts> trendingArtsList, OnArtClickListener listener )
+    {
+        this.trendingArtsList = trendingArtsList;
+        this.listener = listener;
+        ;
+    }
 
     @NonNull
     @Override
@@ -33,9 +40,8 @@ public class TrendingArtsAdapter extends RecyclerView.Adapter<TrendingArtsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull TrendingArtsViewHolder holder, int position) {
-        TrendingArts trendingArts = trendingArtsList.get(position);
-        Picasso.get().load(trendingArts.getImage()).into(holder.imageView);
-        holder.textViewTitle.setText(trendingArts.getTitle());
+        TrendingArts trendingart = trendingArtsList.get(position);
+        holder.bind(trendingart, listener);
     }
 
     @Override
@@ -49,8 +55,16 @@ public class TrendingArtsAdapter extends RecyclerView.Adapter<TrendingArtsAdapte
 
         public TrendingArtsViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.profile);
-            textViewTitle = itemView.findViewById(R.id.user);
+            imageView = itemView.findViewById(R.id.ivLiked);
+            textViewTitle = itemView.findViewById(R.id.title);
         }
+
+        public void bind(TrendingArts trendingArt, OnArtClickListener listener) {
+            textViewTitle.setText(trendingArt.getTitle());
+            Glide.with(itemView.getContext()).load(trendingArt.getImage()).into(imageView);
+            Picasso.get().load(trendingArt.getImage()).into(imageView);
+            itemView.setOnClickListener(v -> listener.onArtClick(trendingArt));
+        }
+
     }
 }

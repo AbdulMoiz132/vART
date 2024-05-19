@@ -1,13 +1,17 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <data>
+
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -15,13 +19,14 @@
                 android:layout_height="wrap_content"
                 android:text="Trending Arts"
                 android:textSize="18sp"
-                android:padding="16dp"/>
+                android:padding="16dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/trendingArtsRecyclerView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"/>
+                android:padding="8dp"
+                android:clipToPadding="false" />
 
         </LinearLayout>
 
@@ -29,7 +34,8 @@
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            android:background="?android:attr/listDivider"
+            android:layout_marginStart="8dp" />
 
         <TextView
             android:id="@+id/topArtistsTitle"
@@ -37,14 +43,15 @@
             android:layout_height="wrap_content"
             android:text="Top Artists"
             android:textSize="18sp"
-            android:padding="16dp"/>
+            android:padding="16dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/topArtistsRecyclerView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:orientation="horizontal"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/topArtistsRecyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:orientation="horizontal"
+            android:clipToPadding="false" />
 
 
         <!-- Followed Artists -->
@@ -52,7 +59,8 @@
             android:id="@+id/divider2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            android:background="?android:attr/listDivider"
+            android:layout_marginStart="8dp" />
 
         <TextView
             android:id="@+id/followedArtistsTitle"
@@ -60,12 +68,15 @@
             android:layout_height="wrap_content"
             android:text="Artists You Follow"
             android:textSize="18sp"
-            android:padding="16dp"/>
+            android:padding="16dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/followedArtistsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:clipToPadding="false" />
 
-</LinearLayout>
+    </LinearLayout>
+</layout>
+

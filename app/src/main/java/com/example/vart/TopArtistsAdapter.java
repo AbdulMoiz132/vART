@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -18,12 +19,18 @@ import com.squareup.picasso.Picasso;
 
 public class TopArtistsAdapter extends RecyclerView.Adapter<TopArtistsAdapter.TopArtistsViewHolder> {
     private final ArrayList<TopArtist> topArtistsList; // Assuming each item has an image URL
-    private final Context context;
+    private final  OnArtistClickListener listener;
 
-    public TopArtistsAdapter(Context context, ArrayList<TopArtist> topArtistsList) {
-        this.context = context;
-        this.topArtistsList = topArtistsList;
+
+    public interface OnArtistClickListener {
+        void onArtistClick(TopArtist artist);
     }
+
+    public TopArtistsAdapter(ArrayList<TopArtist> topArtistsList, OnArtistClickListener listener) {
+        this.topArtistsList = topArtistsList;
+        this.listener = listener;
+    }
+
 
 
     @NonNull
@@ -37,8 +44,7 @@ public class TopArtistsAdapter extends RecyclerView.Adapter<TopArtistsAdapter.To
     @Override
     public void onBindViewHolder(@NonNull TopArtistsViewHolder holder, int position) {
         TopArtist topArtist = topArtistsList.get(position);
-        Picasso.get().load(topArtist.getImage()).into(holder.imageView);
-        holder.name.setText(topArtist.getusername()); // Assuming there's a title field
+        holder.bind(topArtist, listener); // Assuming there's a title field
     }
 
     @Override
@@ -55,6 +61,14 @@ public class TopArtistsAdapter extends RecyclerView.Adapter<TopArtistsAdapter.To
             imageView = itemView.findViewById(R.id.profile);
             name = itemView.findViewById(R.id.user);
         }
+        public void bind(TopArtist artist, OnArtistClickListener listener) {
+            name.setText(artist.getusername());
+            Picasso.get().load(artist.getImage()).into(imageView);
+
+            itemView.setOnClickListener(v -> listener.onArtistClick(artist));
+        }
+
+
     }
 }
 

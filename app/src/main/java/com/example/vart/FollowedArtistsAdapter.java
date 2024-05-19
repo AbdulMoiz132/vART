@@ -1,6 +1,5 @@
 package com.example.vart;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,31 +13,30 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-// Remove com.squareup.picasso
-
 public class FollowedArtistsAdapter extends RecyclerView.Adapter<FollowedArtistsAdapter.FollowedArtistsViewHolder> {
-    private final ArrayList<FollowedArtist> followedArtistsList; // List of followed artists
-    private final Context context;
+    private final ArrayList<FollowedArtist> followedArtistsList; // Assuming each item is a URL to an image
+    private OnFollowedClickListener listener;
 
-    public FollowedArtistsAdapter(Context context, ArrayList<FollowedArtist> followedArtistsList) {
-        this.context = context;
+    public interface OnFollowedClickListener {
+        void onFollowedClick(FollowedArtist followedArtist);
+    }
+
+    public FollowedArtistsAdapter(ArrayList<FollowedArtist> followedArtistsList, OnFollowedClickListener listener) {
         this.followedArtistsList = followedArtistsList;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public FollowedArtistsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.art_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.followed, parent, false);
         return new FollowedArtistsViewHolder(view);
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull FollowedArtistsViewHolder holder, int position) {
         FollowedArtist followedArtist = followedArtistsList.get(position);
-        Picasso.get().load(followedArtist.getImage()).into(holder.imageView);
-
-        holder.name.setText(followedArtist.getUsername()); // Assuming a method to get artist name
+        holder.bind(followedArtist, listener);
     }
 
     @Override
@@ -48,12 +46,18 @@ public class FollowedArtistsAdapter extends RecyclerView.Adapter<FollowedArtists
 
     public static class FollowedArtistsViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView name;
+        TextView textViewName;
 
         public FollowedArtistsViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.profile);
-            name = itemView.findViewById(R.id.user);
+            textViewName = itemView.findViewById(R.id.user);
+        }
+
+        public void bind(FollowedArtist followedArtist, OnFollowedClickListener listener) {
+            textViewName.setText(followedArtist.getUsername());
+            Picasso.get().load(followedArtist.getImage()).into(imageView);
+            itemView.setOnClickListener(v -> listener.onFollowedClick(followedArtist));
         }
     }
 }

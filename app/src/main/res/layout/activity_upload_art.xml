@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    tools:context=".UploadArt">
+
+    <include
+        android:id="@+id/tb"
+        layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingEnd="40dp"
+        android:paddingStart="40dp">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:text="@string/title_of_your_art" />
+
+        <EditText
+            android:id="@+id/artTitle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_upload_art"
+            android:drawablePadding="10dp"
+            android:hint="@string/e_g_the_star_gazing"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:padding="8dp"
+            android:textColor="#999999"
+            android:textColorHighlight="@color/cardview_light_background"
+            android:textColorHint="#999999"
+            android:elevation="5dp"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:padding="5dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/art_description" />
+
+        <EditText
+            android:id="@+id/artDescription"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:gravity="top"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_upload_art"
+            android:drawablePadding="10dp"
+            android:hint="@string/description"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:padding="8dp"
+            android:textColor="#999999"
+            android:textColorHighlight="@color/cardview_light_background"
+            android:textColorHint="#999999"
+            android:elevation="5dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profileCard"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            app:cardElevation="10dp">
+
+            <ImageView
+                android:id="@+id/art"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_art"
+                tools:ignore="contentDescription" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/selectArt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/select_art_to_upload"
+            android:textColor="#007AFF"
+            android:textSize="16sp"
+            app:drawableEndCompat="@drawable/upload"
+            android:drawablePadding="5dp" />
+
+        <Button
+            android:id="@+id/uploadArt"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#FF50B5"
+            android:textColor="@color/white"
+            android:text="@string/upload_art"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

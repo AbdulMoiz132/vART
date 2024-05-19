@@ -125,6 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/white"
                 android:layout_marginTop="5dp"
                 android:background="?android:attr/listDivider" />
 
@@ -218,6 +219,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/white"
                 android:layout_marginTop="5dp"
                 android:background="?android:attr/listDivider" />
 
@@ -243,7 +245,7 @@
                     android:layout_height="wrap_content">
 
                     <ImageButton
-                        android:id="@+id/add"
+                        android:id="@+id/addArt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -254,7 +256,6 @@
 
                 </RelativeLayout>
 
-
             </LinearLayout>
 
             <View
@@ -262,6 +263,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/white"
                 android:background="?android:attr/listDivider" />
 
             <TextView

@@ -17,6 +17,9 @@
         android:theme="@style/Theme.VART"
         tools:targetApi="31">
         <activity
+            android:name=".UploadArt"
+            android:exported="false" />
+        <activity
             android:name=".OpenArtistProfile"
             android:exported="false" />
         <activity

@@ -5,12 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".LikedFragment">
 
-    <TextView
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/likedRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="36sp"
-        android:text="Liked page" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>
