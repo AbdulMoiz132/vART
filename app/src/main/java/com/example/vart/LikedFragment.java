@@ -59,26 +59,26 @@ public class LikedFragment extends Fragment implements LikedAdapter.OnLikedArtCl
         }
 
 
-//        db.collection("liked").whereEqualTo("username", username)
-//                .get()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        for (QueryDocumentSnapshot document : task.getResult()) {
-//                            // Extract the data for each art piece
-//                            String artistUsername = document.getString("artistUsername");
-//                            String title = document.getString("title");
-//                            String imageurl = document.getString("imageurl");
-//                            LikedArts art = new LikedArts(imageurl, title, artistUsername);
-//                            likedArts.add(art);
-//                        }
-//                        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
-//                        adapter = new LikedAdapter(likedArts, this);
-//                        recyclerView.setAdapter(adapter);
-//                    } else
-//                    {
-//                        // Handle errors
-//                    }
-//                });
+        db.collection("liked").whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            // Extract the data for each art piece
+                            String artistUsername = document.getString("artistUsername");
+                            String title = document.getString("title");
+                            String imageurl = document.getString("imageurl");
+                            LikedArts art = new LikedArts(imageurl, title, artistUsername);
+                            likedArts.add(art);
+                        }
+                        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+                        adapter = new LikedAdapter(likedArts, this);
+                        recyclerView.setAdapter(adapter);
+                    } else
+                    {
+                        // Handle errors
+                    }
+                });
 
         likedArts.add(new LikedArts("https://firebasestorage.googleapis.com/v0/b/vart-2329a.appspot.com/o/images%2Fart1.jpg?alt=media&token=34019c49-02cb-46ad-8b77-4d1945910640", "Murshid", "Ho"));
         likedArts.add(new LikedArts("https://firebasestorage.googleapis.com/v0/b/vart-2329a.appspot.com/o/images%2Fart2.jpg?alt=media&token=ece0b9c7-2ed5-4f51-8c7c-29acba8f9b06","Warrior", "Hi"));

@@ -177,31 +177,31 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
     public void onArtClick(TrendingArts art) {
 
         Toast.makeText(getContext(), art.getusername(), Toast.LENGTH_SHORT).show();
-//       Intent intent = new Intent(requireContext(), Post.class);
-//       intent.putExtra("username", username);
-//       intent.putExtra("artistUsername", art.getusername());
-//       intent.putExtra("title", art.getTitle());
-//       intent.putExtra("artUrl", art.getImage());
-//       startActivity(intent);
+       Intent intent = new Intent(requireContext(), Post.class);
+       intent.putExtra("username", username);
+       intent.putExtra("artistUsername", art.getusername());
+       intent.putExtra("title", art.getTitle());
+       intent.putExtra("artUrl", art.getImage());
+       startActivity(intent);
     }
 
     @Override
     public void onArtistClick(TopArtist artist) {
-//        Intent intent = new Intent(requireContext(), OpenArtistProfile.class);
-//        intent.putExtra("username", username);
-//        intent.putExtra("artistUsername", artist.getusername());
-//        intent.putExtra("profile", artist.getImage());
-//        startActivity(intent);
+        Intent intent = new Intent(requireContext(), OpenArtistProfile.class);
+        intent.putExtra("username", username);
+        intent.putExtra("artistUsername", artist.getusername());
+        intent.putExtra("profile", artist.getImage());
+        startActivity(intent);
         Toast.makeText(getContext(), artist.getusername(), Toast.LENGTH_SHORT).show();
     }
 
     public void onFollowedClick(FollowedArtist artist)
     {
-//        Intent intent = new Intent(requireContext(), OpenArtistProfile.class);
-//        intent.putExtra("username", username);
-//        intent.putExtra("artistUsername", artist.getUsername());
-//        intent.putExtra("profile", artist.getImage());
-//        startActivity(intent);
+        Intent intent = new Intent(requireContext(), OpenArtistProfile.class);
+        intent.putExtra("username", username);
+        intent.putExtra("artistUsername", artist.getUsername());
+        intent.putExtra("profile", artist.getImage());
+        startActivity(intent);
 
         Toast.makeText(getContext(), artist.getUsername(), Toast.LENGTH_SHORT).show();
     }

@@ -59,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         username = getIntent().getStringExtra("username");
         profileBundle = new Bundle();
         profileBundle.putString("username", username);
+
         isUserArtist();
 
         getNameAndProfile();
