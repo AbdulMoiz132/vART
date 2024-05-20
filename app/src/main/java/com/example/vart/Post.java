@@ -17,7 +17,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Post extends AppCompatActivity {
 
@@ -38,7 +37,6 @@ public class Post extends AppCompatActivity {
         artistUsername = getIntent().getStringExtra("artistUsername");
         title = getIntent().getStringExtra("title");
         artUrl = getIntent().getStringExtra("artUrl");
-        isArtist = getIntent().getBooleanExtra("isArtist", false);
         artistProfile = getIntent().getStringExtra("artistProfile");
 
         profilePic = findViewById(R.id.profilePic);
@@ -58,6 +56,36 @@ public class Post extends AppCompatActivity {
 
         checkLikedStatus();
         checkSaveStatus();
+
+        if (username.equals(artistUsername))
+        {
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            deleteButton.setVisibility(View.GONE);
+        }
+
+        if (isLiked) {
+            Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
+            likeButton.setBackground(liked);
+        }
+        else
+        {
+            Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
+            likeButton.setBackground(notLiked);
+        }
+
+        if (isSaved)
+        {
+            Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
+            saveButton.setBackground(saved);
+        }
+        else
+        {
+            Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
+            saveButton.setBackground(notSaved);
+        }
 
         db.collection("users").whereEqualTo("username", artistUsername)
                 .get()
@@ -169,14 +197,6 @@ public class Post extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     isLiked = !queryDocumentSnapshots.isEmpty();
-                    if (isLiked) {
-                        Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
-                        likeButton.setBackground(liked);
-                    } else {
-                        Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
-                        likeButton.setBackground(notLiked);
-                    }
-
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to check Liked status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -191,17 +211,6 @@ public class Post extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     isSaved = !queryDocumentSnapshots.isEmpty();
-                    if (isSaved)
-                    {
-                        Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
-                        saveButton.setBackground(saved);
-                    }
-                    else
-                    {
-                        Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
-                        saveButton.setBackground(notSaved);
-                    }
-
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to check saved status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -307,7 +316,6 @@ public class Post extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     isSaved = true;
                     Toast.makeText(Post.this, "saver added", Toast.LENGTH_SHORT).show();
-
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to add saver: " + e.getMessage(), Toast.LENGTH_SHORT).show();

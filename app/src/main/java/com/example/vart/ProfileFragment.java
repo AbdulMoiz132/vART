@@ -1,10 +1,12 @@
 package com.example.vart;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -22,7 +24,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class ProfileFragment extends Fragment {
     View  bio, followers, arts, artistPrivilege;
     String username, fullName, profile, bioText;
     boolean isArtist;
+    int following, artistFollowerCount, artistArtCount;
     ProgressDialog progressDialog;
     private static final int EDIT_NAME_REQUEST = 1;
     private static final int EDIT_BIO_REQUEST = 2;
@@ -79,12 +81,56 @@ public class ProfileFragment extends Fragment {
         progressDialog.setMessage("");
         progressDialog.setCancelable(false);
 
+        db.collection("users").whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.getString("name") != null)
+                            {
+                                following = document.getLong("following").intValue();
+
+                                if (following != 0)
+                                {
+                                    followingCount.setText(String.valueOf(following));
+                                }
+                            }
+                        }
+                    } else {
+                        // Handle errors
+                    }
+                });
+
         if (fullName != null)
         {
             name.setText(fullName);
         }
 
         if (isArtist) {
+
+            db.collection("users").whereEqualTo("username", username)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document.getString("name") != null)
+                                {
+                                    artistFollowerCount = document.getLong("followers").intValue();
+                                    artistArtCount = document.getLong("arts").intValue();
+
+                                    if (artistArtCount != 0) {
+                                        artCount.setText(String.valueOf(artistArtCount));
+                                    }
+                                    if (artistFollowerCount != 0) {
+                                        followerCount.setText(String.valueOf(artistFollowerCount));
+                                    }
+                                }
+                            }
+                        } else {
+                            // Handle errors
+                        }
+                    });
+
             if (!bioText.equals("null"))
             {
                 artistBio.setText(bioText);
@@ -212,7 +258,8 @@ public class ProfileFragment extends Fragment {
         }
         if (itemId == R.id.logout)
         {
-            Toast.makeText(getContext(), "Logged out", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = getBuilder();
+            builder.show();
         }
         if (itemId == R.id.deleteAcc)
         {
@@ -220,5 +267,27 @@ public class ProfileFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @NonNull
+    private AlertDialog.Builder getBuilder() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Logout");
+        builder.setMessage("Are you sure you want to logout?");
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Call the logout method
+                LogoutUtil.logout(getActivity());
+                Toast.makeText(getContext(), "Logged out", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        return builder;
     }
 }
