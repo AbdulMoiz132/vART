@@ -330,6 +330,7 @@ public class OpenArtistProfile extends AppCompatActivity implements OpenProfileA
         intent.putExtra("artistUsername", art.getUsername());
         intent.putExtra("title", art.getTitle());
         intent.putExtra("artUrl", art.getImage());
+        intent.putExtra("SOURCE", "ARTIST_PROFILE");
         startActivity(intent);
     }
 }

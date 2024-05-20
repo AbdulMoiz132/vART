@@ -70,6 +70,26 @@ public class HomeActivity extends AppCompatActivity {
 
         getNameAndProfile();
 
+        String fragment = getIntent().getStringExtra("FRAGMENT");
+        if (fragment != null) {
+            switch (fragment) {
+                case "HOME":
+                    HomeFragment home = new HomeFragment();
+                    home.setArguments(homeBundle);
+                    toolbarTitle.setText(R.string.app_name);
+                    loadFragment(home);
+                    break;
+                case "PROFILE":
+                    isUserArtist();
+                    getNameAndProfile();
+                    ProfileFragment profile = new ProfileFragment();
+                    profile.setArguments(profileBundle);
+                    toolbarTitle.setText(username);
+                    loadFragment(profile);
+                    break;
+            }
+        }
+
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -130,7 +150,12 @@ public class HomeActivity extends AppCompatActivity {
         if ((requestCode == EDIT_NAME_REQUEST || requestCode == EDIT_BIO_REQUEST || requestCode == CHANGE_PASSWORD_REQUEST
                 || requestCode == UPDATE_PROFILE_PIC_REQUEST) && resultCode == RESULT_OK)
         {
-            bottomNavigationView.setSelectedItemId(R.id.navProfile);
+            isUserArtist();
+            getNameAndProfile();
+            ProfileFragment profile = new ProfileFragment();
+            profile.setArguments(profileBundle);
+            toolbarTitle.setText(username);
+            loadFragment(profile);
         }
         if (requestCode == ADD_ART_REQUEST && resultCode == RESULT_OK)
         {

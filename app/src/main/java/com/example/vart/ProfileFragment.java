@@ -291,6 +291,10 @@ public class ProfileFragment extends Fragment implements OpenProfileAdapter.OnAr
             Intent intent = new Intent(getContext(), EditBio.class);
             intent.putExtra("username", username);
             startActivityForResult(intent, EDIT_BIO_REQUEST);
+            
+            getParentFragmentManager().beginTransaction()
+                    .remove(ProfileFragment.this)
+                    .commit();
         }
         if (itemId == R.id.changePass)
         {
@@ -340,6 +344,7 @@ public class ProfileFragment extends Fragment implements OpenProfileAdapter.OnAr
         intent.putExtra("artistUsername", art.getUsername());
         intent.putExtra("title", art.getTitle());
         intent.putExtra("artUrl", art.getImage());
+        intent.putExtra("SOURCE", "PROFILE");
         startActivity(intent);
     }
 

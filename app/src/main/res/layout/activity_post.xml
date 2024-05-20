@@ -124,7 +124,7 @@
                 android:id="@+id/likeButton"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/hollow_heart"
+                android:src="@drawable/hollow_like"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/like" />
 

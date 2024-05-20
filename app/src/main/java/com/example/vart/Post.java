@@ -62,9 +62,6 @@ public class Post extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        checkLikedStatus();
-        checkSaveStatus();
-
         if (username.equals(artistUsername))
         {
             deleteButton.setVisibility(View.VISIBLE);
@@ -74,26 +71,53 @@ public class Post extends AppCompatActivity {
             deleteButton.setVisibility(View.GONE);
         }
 
-        if (isLiked) {
-            Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
-            likeButton.setBackground(liked);
-        }
-        else
-        {
-            Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
-            likeButton.setBackground(notLiked);
-        }
+        // checking if the user has already liked the post
+        db.collection("liked")
+                .whereEqualTo("user", username)
+                .whereEqualTo("title", title)
+                .whereEqualTo("artist", artistUsername)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    isLiked = !queryDocumentSnapshots.isEmpty();
 
-        if (isSaved)
-        {
-            Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
-            saveButton.setBackground(saved);
-        }
-        else
-        {
-            Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
-            saveButton.setBackground(notSaved);
-        }
+                    if (isLiked) {
+                        Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
+                        likeButton.setBackground(liked);
+                    }
+                    else
+                    {
+                        Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
+                        likeButton.setBackground(notLiked);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(Post.this, "Failed to check Liked status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+
+        // checking if the user has already saved the post
+        db.collection("saved")
+                .whereEqualTo("user", username)
+                .whereEqualTo("title", title)
+                .whereEqualTo("artist", artistUsername)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    isSaved = !queryDocumentSnapshots.isEmpty();
+
+                    if (isSaved)
+                    {
+                        Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
+                        saveButton.setBackground(saved);
+                    }
+                    else
+                    {
+                        Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
+                        saveButton.setBackground(notSaved);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(Post.this, "Failed to check saved status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+
 
         db.collection("users").whereEqualTo("username", artistUsername)
                 .get()
@@ -203,34 +227,6 @@ public class Post extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void checkLikedStatus() {
-        db.collection("liked")
-                .whereEqualTo("user", username)
-                .whereEqualTo("title", title)
-                .whereEqualTo("artist", artistUsername)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    isLiked = !queryDocumentSnapshots.isEmpty();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(Post.this, "Failed to check Liked status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    private void checkSaveStatus() {
-        db.collection("saved")
-                .whereEqualTo("user", username)
-                .whereEqualTo("title", title)
-                .whereEqualTo("artist", artistUsername)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    isSaved = !queryDocumentSnapshots.isEmpty();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(Post.this, "Failed to check saved status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
     }
 
     private void likeArt() {
