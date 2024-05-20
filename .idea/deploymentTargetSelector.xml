@@ -2,7 +2,11 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
+<<<<<<< HEAD
       <SelectionState runConfigName="app">
+=======
+      <SelectionState runConfigName="VART">
+>>>>>>> 7e2169425c50d1f9634d2db6987f4e67b6932b88
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

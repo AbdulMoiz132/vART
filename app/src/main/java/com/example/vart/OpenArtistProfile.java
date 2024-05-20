@@ -1,5 +1,8 @@
 package com.example.vart;
 
+import static java.security.AccessController.getContext;
+
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,11 +25,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class OpenArtistProfile extends AppCompatActivity {
+public class OpenArtistProfile extends AppCompatActivity implements OpenProfileAdapter.OnArtClickListener{
 
     ImageView profilePic;
     TextView toolbarTitle, fullName, artistBio, followerCount, followingCount, artCount;
@@ -37,10 +43,26 @@ public class OpenArtistProfile extends AppCompatActivity {
     boolean isFollowing = false;
     ListenerRegistration listenerRegistration;
 
+    RecyclerView recyclerView;
+
+    ArrayList<Arts> Arts;
+
+    TextView ArtText;
+
+    private OpenProfileAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_artist_profile);
+
+        recyclerView = findViewById(R.id.ArtsRecyclerView);
+
+
+        Arts = new ArrayList<>();
+
+        ArtText = findViewById(R.id.tvNoArts);
+        ArtText.setVisibility(View.GONE);
 
         toolbar = findViewById(R.id.tb);
         setSupportActionBar(toolbar);
@@ -90,6 +112,33 @@ public class OpenArtistProfile extends AppCompatActivity {
                 followArtist();
             }
         });
+
+        db.collection("artwork").whereEqualTo("username", artistUsername)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (!task.getResult().isEmpty()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Extract the data for each art piece
+                                String artistUsername = document.getString("username");
+                                String title = document.getString("title");
+                                String imageurl = document.getString("imageUrl");
+                                Arts art = new Arts(imageurl, title, artistUsername);
+                                Arts.add(art);
+                            }
+                        }
+                        else
+                        {
+                            ArtText.setVisibility(View.VISIBLE);
+                        }
+                        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
+                        adapter = new OpenProfileAdapter(Arts, this);
+                        recyclerView.setAdapter(adapter);
+                    } else
+                    {
+
+                    }
+                });
     }
 
     private void startFirestoreListener() {
@@ -274,5 +323,17 @@ public class OpenArtistProfile extends AppCompatActivity {
                                 });
                     }
                 });
+    }
+
+
+
+    public void onArtClick(Arts art)
+    {
+        Intent intent = new Intent(this,Post.class);
+        intent.putExtra("username", username);
+        intent.putExtra("artistUsername", art.getUsername());
+        intent.putExtra("title", art.getTitle());
+        intent.putExtra("artUrl", art.getImage());
+        startActivity(intent);
     }
 }

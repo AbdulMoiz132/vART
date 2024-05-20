@@ -1,6 +1,7 @@
 package com.example.vart;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -54,6 +56,8 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
 
     String username;
 
+    TextView NoArtists;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.fragment_home, container, false);
@@ -70,6 +74,8 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
 
         followedArrayList = new ArrayList<>();
 
+        NoArtists = rootview.findViewById(R.id.tvNoArtists);
+        NoArtists.setVisibility(View.GONE);
 
         db = FirebaseFirestore.getInstance();
 
@@ -136,40 +142,48 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
                 });
 
 
-//        db.collection("follower").whereEqualTo("user", username)
-//                .get()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        ArrayList<String> artistnames = new ArrayList<>();
-//                        for (QueryDocumentSnapshot document : task.getResult()) {
-//                            String artistname = document.getString("artist");
-//                            artistnames.add(artistname);
-//                        }
-//
-//                        // Fetch profiles of the top artists
-//                        db.collection("users").whereIn("username", artistnames)
-//                                .get()
-//                                .addOnCompleteListener(task1 -> {
-//                                    if (task1.isSuccessful()) {
-//                                        for (QueryDocumentSnapshot document : task1.getResult()) {
-//                                            String username = document.getString("username");
-//                                            String profileImageUrl = document.getString("profile");
-//                                            FollowedArtist followedArtist = new FollowedArtist(profileImageUrl, username);
-//                                            followedArrayList.add(followedArtist);
-//                                        }
-//                                        followedArtistAdapter = new FollowedArtistsAdapter(followedArrayList, this);
-//                                        recyclerView3.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-//                                        recyclerView3.setAdapter(followedArtistAdapter);
-//                                    } else {
-//                                        // Handle errors
-//                                    }
-//                                });
-//                    } else {
-//                        // Handle errors
-//                    }
-//                });
+            db.collection("follower").whereEqualTo("user", username)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            ArrayList<String> artistnames = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String artistname = document.getString("artist");
+                                artistnames.add(artistname);
+                            }
 
+                            if (!artistnames.isEmpty()) {
+                                // Fetch profiles of the followed artists
+                                db.collection("users").whereIn("username", artistnames)
+                                        .get()
+                                        .addOnCompleteListener(task1 -> {
+                                            if (task1.isSuccessful()) {
+                                                ArrayList<FollowedArtist> followedArrayList = new ArrayList<>();
+                                                for (QueryDocumentSnapshot document : task1.getResult()) {
+                                                    String artistUsername = document.getString("username");
+                                                    String profileImageUrl = document.getString("profile");
+                                                    FollowedArtist followedArtist = new FollowedArtist(profileImageUrl, artistUsername);
+                                                    followedArrayList.add(followedArtist);
+                                                }
 
+                                                // Update RecyclerView with followed artists
+                                                followedArtistAdapter = new FollowedArtistsAdapter(followedArrayList, this);
+                                                recyclerView3.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                                                recyclerView3.setAdapter(followedArtistAdapter);
+                                            } else {
+                                                // Handle errors
+                                                Toast.makeText(getContext(), "Error: " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            } else {
+                                // No artists followed
+                                NoArtists.setVisibility(View.VISIBLE);
+                            }
+                        } else {
+                            // Handle errors
+                            Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
         return rootview;
     }
@@ -201,6 +215,7 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
         startActivity(intent);
     }
 }
+
 
 
 class TrendingArts {
