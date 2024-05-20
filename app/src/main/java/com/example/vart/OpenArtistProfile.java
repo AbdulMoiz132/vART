@@ -2,6 +2,7 @@ package com.example.vart;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,8 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -31,6 +35,7 @@ public class OpenArtistProfile extends AppCompatActivity {
     private Toolbar toolbar;
     FirebaseFirestore db;
     boolean isFollowing = false;
+    ListenerRegistration listenerRegistration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,61 +65,14 @@ public class OpenArtistProfile extends AppCompatActivity {
 
         checkFollowingStatus();
 
-        db.collection("users").whereEqualTo("username", artistUsername)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            if (document.getString("name") != null) {
-                                artistName = document.getString("name");
-                                artistFollowingCount = document.getLong("following").intValue();
-
-                                if (artistName != null) {
-                                    fullName.setText(artistName);
-                                }
-                                if (artistFollowingCount != 0) {
-                                    followingCount.setText(String.valueOf(artistFollowingCount));
-                                }
-                            }
-                        }
-                    });
-
-        db.collection("artist").whereEqualTo("username", artistUsername)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.getString("username") != null) {
-                                bioText = document.getString("bio");
-                                artistFollowerCount = document.getLong("followers").intValue();
-                                artistArtCount = document.getLong("arts").intValue();
-
-                                if (artistArtCount != 0) {
-                                    artCount.setText(String.valueOf(artistArtCount));
-                                }
-                                if (artistFollowerCount != 0) {
-                                    followerCount.setText(String.valueOf(artistFollowerCount));
-                                }
-                                if (!bioText.equals("null")) {
-                                    artistBio.setText(bioText);
-                                    bio.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        }
-                    } else {
-                        // Handle errors
-                    }
-                });
+        // Set up the real-time listener
+        startFirestoreListener();
 
         toolbarTitle.setText(artistUsername);
 
         if (!Objects.equals(profile, "null")) {
             Picasso.get().load(profile).placeholder(R.drawable.default_profile).into(profilePic);
         }
-
-//        else {
-//            bio.setVisibility(View.GONE);
-//        }
-
 
         follow.setOnClickListener(v -> {
             if (isFollowing) {
@@ -123,6 +81,65 @@ public class OpenArtistProfile extends AppCompatActivity {
                 followArtist();
             }
         });
+    }
+
+    private void startFirestoreListener() {
+        listenerRegistration = db.collection("users").whereEqualTo("username", artistUsername)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.w("Firestore", "Listen failed.", error);
+                        return;
+                    }
+
+                    if (value != null && !value.isEmpty()) {
+                        for (QueryDocumentSnapshot document : value) {
+                            artistName = document.getString("name");
+                            artistFollowingCount = document.getLong("following").intValue();
+
+                            if (artistName != null) {
+                                fullName.setText(artistName);
+                            }
+                            if (artistFollowingCount != 0) {
+                                followingCount.setText(String.valueOf(artistFollowingCount));
+                            }
+                        }
+                    }
+                });
+
+        listenerRegistration = db.collection("artist").whereEqualTo("username", artistUsername)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.w("Firestore", "Listen failed.", error);
+                        return;
+                    }
+
+                    if (value != null && !value.isEmpty()) {
+                        for (QueryDocumentSnapshot document : value) {
+                            bioText = document.getString("bio");
+                            artistFollowerCount = document.getLong("followers").intValue();
+                            artistArtCount = document.getLong("arts").intValue();
+
+                            if (artistArtCount != 0) {
+                                artCount.setText(String.valueOf(artistArtCount));
+                            }
+                            if (artistFollowerCount != 0) {
+                                followerCount.setText(String.valueOf(artistFollowerCount));
+                            }
+                            if (bioText != null && !bioText.equals("null")) {
+                                artistBio.setText(bioText);
+                                bio.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (listenerRegistration != null) {
+            listenerRegistration.remove();
+        }
     }
 
     private void checkFollowingStatus() {
@@ -183,7 +200,6 @@ public class OpenArtistProfile extends AppCompatActivity {
                         int updatedFollowing = currentFollowing + 1;
 
                         document.getReference().update("following", updatedFollowing);
-                        followingCount.setText(String.valueOf(updatedFollowing));
                     }
                 });
 
@@ -229,7 +245,6 @@ public class OpenArtistProfile extends AppCompatActivity {
                         int updatedFollowing = currentFollowing - 1;
 
                         document.getReference().update("following", updatedFollowing);
-                        followingCount.setText(String.valueOf(updatedFollowing));
                     }
                 });
 

@@ -59,25 +59,6 @@ public class Post extends AppCompatActivity {
         checkLikedStatus();
         checkSaveStatus();
 
-        if (isLiked) {
-            Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
-            likeButton.setBackground(liked);
-        } else {
-            Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
-            likeButton.setBackground(notLiked);
-        }
-
-        if (isSaved)
-        {
-            Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
-            saveButton.setBackground(saved);
-        }
-        else
-        {
-            Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
-            saveButton.setBackground(notSaved);
-        }
-
         db.collection("users").whereEqualTo("username", artistUsername)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -188,6 +169,14 @@ public class Post extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     isLiked = !queryDocumentSnapshots.isEmpty();
+                    if (isLiked) {
+                        Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
+                        likeButton.setBackground(liked);
+                    } else {
+                        Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
+                        likeButton.setBackground(notLiked);
+                    }
+
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to check Liked status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -202,6 +191,17 @@ public class Post extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     isSaved = !queryDocumentSnapshots.isEmpty();
+                    if (isSaved)
+                    {
+                        Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
+                        saveButton.setBackground(saved);
+                    }
+                    else
+                    {
+                        Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
+                        saveButton.setBackground(notSaved);
+                    }
+
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to check saved status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -307,6 +307,7 @@ public class Post extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     isSaved = true;
                     Toast.makeText(Post.this, "saver added", Toast.LENGTH_SHORT).show();
+
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to add saver: " + e.getMessage(), Toast.LENGTH_SHORT).show();
