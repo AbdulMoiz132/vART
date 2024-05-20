@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import com.google.firebase.storage.StorageReference;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtClickListener, TopArtistsAdapter.OnArtistClickListener, FollowedArtistsAdapter.OnFollowedClickListener {
@@ -106,7 +109,6 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
                     }
                 });
 
-        // Fetch top artists based on followers
         db.collection("artist").orderBy("followers", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
@@ -118,31 +120,52 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
                             usernames.add(username);
                         }
 
-                        // Fetch profiles of the top artists
-                        db.collection("users").whereIn("username", usernames)
-                                .get()
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : task1.getResult()) {
-                                            String username = document.getString("username");
-                                            String profileImageUrl = document.getString("profile");
-                                            TopArtist topArtist = new TopArtist(profileImageUrl, username);
-                                            topArtistArrayList.add(topArtist);
+                        if (!usernames.isEmpty()) {
+                            // Fetch profiles of the top artists in a single query
+                            db.collection("users").whereIn("username", usernames)
+                                    .get()
+                                    .addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            // Create a map to store user profiles by username
+                                            Map<String, TopArtist> userProfileMap = new HashMap<>();
+                                            for (QueryDocumentSnapshot document : task1.getResult()) {
+                                                String username = document.getString("username");
+                                                String profileImageUrl = document.getString("profile");
+                                                TopArtist topArtist = new TopArtist(profileImageUrl, username);
+                                                userProfileMap.put(username, topArtist);
+                                            }
+
+                                            // Clear the list before adding new data
+                                            topArtistArrayList.clear();
+
+                                            // Add the user profiles to the list in the order of the usernames
+                                            for (String username : usernames) {
+                                                TopArtist topArtist = userProfileMap.get(username);
+                                                if (topArtist != null) {
+                                                    topArtistArrayList.add(topArtist);
+                                                }
+                                            }
+
+                                            // Ensure this runs on the main thread
+
+                                                topArtistAdapter = new TopArtistsAdapter(topArtistArrayList, this);
+                                                recyclerView2.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                                                recyclerView2.setAdapter(topArtistAdapter);
+                                            
+                                        } else {
+                                            // Handle errors for the users query
+                                            Log.e("Firestore", "Error getting user documents: ", task1.getException());
                                         }
-                                        topArtistAdapter = new TopArtistsAdapter(topArtistArrayList, this);
-                                        recyclerView2.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView2.setAdapter(topArtistAdapter);
-                                    } else {
-                                        // Handle errors
-                                    }
-                                });
+                                    });
+                        }
                     } else {
-                        // Handle errors
+                        // Handle errors for the artist query
+                        Log.e("Firestore", "Error getting artist documents: ", task.getException());
                     }
                 });
 
 
-            db.collection("follower").whereEqualTo("user", username)
+        db.collection("follower").whereEqualTo("user", username)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -218,7 +241,8 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
 
 
 
-class TrendingArts {
+class TrendingArts
+{
     private String image;
     private String title;
     private String username;

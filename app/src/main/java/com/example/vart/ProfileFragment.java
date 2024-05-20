@@ -1,5 +1,6 @@
 package com.example.vart;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,11 +29,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements OpenProfileAdapter.OnArtClickListener {
 
     FirebaseFirestore db;
     ImageView profilePic, editProfilePic;
@@ -47,9 +51,24 @@ public class ProfileFragment extends Fragment {
     private static final int UPDATE_PROFILE_PIC_REQUEST = 4;
     private static final int ADD_ART_REQUEST = 5;
 
+    RecyclerView recyclerView;
+
+    ArrayList<Arts> Arts;
+
+    TextView ArtText;
+
+    private OpenProfileAdapter adapter;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_profile, container, false);
+
+        recyclerView = rootView.findViewById(R.id.ArtRecyclerView);
+        ArtText = rootView.findViewById(R.id.tvNoArt);
+        ArtText.setVisibility(View.GONE);
+
+        Arts = new ArrayList<>();
 
         profilePic = rootView.findViewById(R.id.profilePic);
         editProfilePic = rootView.findViewById(R.id.editProfilePic);
@@ -128,6 +147,30 @@ public class ProfileFragment extends Fragment {
                         }
                     });
 
+            db.collection("artwork").whereEqualTo("username", username)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            if (!task.getResult().isEmpty()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    // Extract the data for each art piece
+                                    String artistUsername = document.getString("username");
+                                    String title = document.getString("title");
+                                    String imageurl = document.getString("imageUrl");
+                                    Arts art = new Arts(imageurl, title, artistUsername);
+                                    Arts.add(art);
+                                }
+                            }
+                            else
+                            {
+                                ArtText.setVisibility(View.VISIBLE);
+                            }
+                            recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+                            adapter = new OpenProfileAdapter(Arts, this);
+                            recyclerView.setAdapter(adapter);
+                        }
+                    });
+
             if (!bioText.equals("null"))
             {
                 artistBio.setText(bioText);
@@ -147,6 +190,7 @@ public class ProfileFragment extends Fragment {
             followers.setVisibility(View.GONE);
             arts.setVisibility(View.GONE);
             artistPrivilege.setVisibility(View.GONE);
+            ArtText.setVisibility(View.GONE);
         }
 
         if (!Objects.equals(profile, "null"))
@@ -186,6 +230,7 @@ public class ProfileFragment extends Fragment {
                                 followers.setVisibility(View.VISIBLE);
                                 arts.setVisibility(View.VISIBLE);
                                 artistPrivilege.setVisibility(View.VISIBLE);
+                                ArtText.setVisibility(View.VISIBLE);
                                 isArtist = true;
                             }
                         })
@@ -287,4 +332,15 @@ public class ProfileFragment extends Fragment {
         });
         return builder;
     }
+
+    public void onArtClick(Arts art)
+    {
+        Intent intent = new Intent(getContext(), Post.class);
+        intent.putExtra("username", username);
+        intent.putExtra("artistUsername", art.getUsername());
+        intent.putExtra("title", art.getTitle());
+        intent.putExtra("artUrl", art.getImage());
+        startActivity(intent);
+    }
+
 }

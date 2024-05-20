@@ -1,7 +1,5 @@
 package com.example.vart;
 
-import static java.security.AccessController.getContext;
-
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,11 +16,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -56,7 +52,7 @@ public class OpenArtistProfile extends AppCompatActivity implements OpenProfileA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_artist_profile);
 
-        recyclerView = findViewById(R.id.ArtsRecyclerView);
+        recyclerView = findViewById(R.id.ArtRecyclerView);
 
 
         Arts = new ArrayList<>();

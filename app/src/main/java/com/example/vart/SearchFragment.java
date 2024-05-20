@@ -21,13 +21,67 @@ import java.util.ArrayList;
 
 public class SearchFragment extends Fragment {
 
+    private SearchView searchView;
+    private RecyclerView recyclerView;
+    private ArtistAdapter artistAdapter;
+    private ArrayList<String> artistList;
+
+    private FirebaseFirestore db;
+    private CollectionReference artistsRef;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootview = inflater.inflate(R.layout.fragment_search, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_search, container, false);
 
-        return rootview;
+        searchView = rootView.findViewById(R.id.searchView);
+        recyclerView = rootView.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-  }
+        artistList = new ArrayList<>();
+        artistAdapter = new ArtistAdapter(artistList);
+        recyclerView.setAdapter(artistAdapter);
+
+        db = FirebaseFirestore.getInstance();
+        artistsRef = db.collection("artist");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchArtists(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    artistList.clear();
+                    artistAdapter.notifyDataSetChanged();
+                } else {
+                    searchArtists(newText);
+                }
+                return false;
+            }
+        });
+
+        return rootView;
+    }
+
+    private void searchArtists(String query) {
+        artistsRef.whereEqualTo("username", query)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        artistList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String artistName = document.getString("username");
+                            if (artistName != null) {
+                                artistList.add(artistName);
+                            }
+                        }
+                        artistAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
 }
 
 
