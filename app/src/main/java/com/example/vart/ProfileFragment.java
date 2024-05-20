@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class ProfileFragment extends Fragment {
     View  bio, followers, arts, artistPrivilege;
     String username, fullName, profile, bioText;
     boolean isArtist;
+    int following, artistFollowerCount, artistArtCount;
     ProgressDialog progressDialog;
     private static final int EDIT_NAME_REQUEST = 1;
     private static final int EDIT_BIO_REQUEST = 2;
@@ -79,12 +81,56 @@ public class ProfileFragment extends Fragment {
         progressDialog.setMessage("");
         progressDialog.setCancelable(false);
 
+        db.collection("users").whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.getString("name") != null)
+                            {
+                                following = document.getLong("following").intValue();
+
+                                if (following != 0)
+                                {
+                                    followingCount.setText(String.valueOf(following));
+                                }
+                            }
+                        }
+                    } else {
+                        // Handle errors
+                    }
+                });
+
         if (fullName != null)
         {
             name.setText(fullName);
         }
 
         if (isArtist) {
+
+            db.collection("users").whereEqualTo("username", username)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document.getString("name") != null)
+                                {
+                                    artistFollowerCount = document.getLong("followers").intValue();
+                                    artistArtCount = document.getLong("arts").intValue();
+
+                                    if (artistArtCount != 0) {
+                                        artCount.setText(String.valueOf(artistArtCount));
+                                    }
+                                    if (artistFollowerCount != 0) {
+                                        followerCount.setText(String.valueOf(artistFollowerCount));
+                                    }
+                                }
+                            }
+                        } else {
+                            // Handle errors
+                        }
+                    });
+
             if (!bioText.equals("null"))
             {
                 artistBio.setText(bioText);

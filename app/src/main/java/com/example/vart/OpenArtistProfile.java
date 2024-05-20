@@ -68,6 +68,15 @@ public class OpenArtistProfile extends AppCompatActivity {
         // Set up the real-time listener
         startFirestoreListener();
 
+        if (username.equals(artistUsername))
+        {
+            follow.setVisibility(View.GONE);
+        }
+        else
+        {
+            follow.setVisibility(View.VISIBLE);
+        }
+
         toolbarTitle.setText(artistUsername);
 
         if (!Objects.equals(profile, "null")) {

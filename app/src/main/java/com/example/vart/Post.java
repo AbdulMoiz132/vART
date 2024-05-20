@@ -17,7 +17,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Post extends AppCompatActivity {
 
@@ -38,7 +37,6 @@ public class Post extends AppCompatActivity {
         artistUsername = getIntent().getStringExtra("artistUsername");
         title = getIntent().getStringExtra("title");
         artUrl = getIntent().getStringExtra("artUrl");
-        isArtist = getIntent().getBooleanExtra("isArtist", false);
         artistProfile = getIntent().getStringExtra("artistProfile");
 
         profilePic = findViewById(R.id.profilePic);
@@ -59,10 +57,21 @@ public class Post extends AppCompatActivity {
         checkLikedStatus();
         checkSaveStatus();
 
+        if (username.equals(artistUsername))
+        {
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            deleteButton.setVisibility(View.GONE);
+        }
+
         if (isLiked) {
             Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
             likeButton.setBackground(liked);
-        } else {
+        }
+        else
+        {
             Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
             likeButton.setBackground(notLiked);
         }
