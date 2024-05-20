@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView toolbarTitle;
     boolean isArtist;
-    Bundle profileBundle;
+    Bundle profileBundle, homeBundle, likedBundle;
     FirebaseFirestore db;
     private static final int EDIT_NAME_REQUEST = 1;
     private static final int EDIT_BIO_REQUEST = 2;
@@ -60,6 +60,12 @@ public class HomeActivity extends AppCompatActivity {
         profileBundle = new Bundle();
         profileBundle.putString("username", username);
 
+        homeBundle = new Bundle();
+        homeBundle.putString("username", username);
+
+        likedBundle = new Bundle();
+        likedBundle.putString("username", username);
+
         isUserArtist();
 
         getNameAndProfile();
@@ -72,8 +78,10 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (itemId == R.id.navHome)
                 {
+                    HomeFragment home = new HomeFragment();
+                    home.setArguments(homeBundle);
                     toolbarTitle.setText(R.string.app_name);
-                    loadFragment(new HomeFragment());
+                    loadFragment(home);
                 }
                 else if (itemId == R.id.navSearch)
                 {
@@ -81,8 +89,10 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 else if (itemId == R.id.navLiked)
                 {
+                    LikedFragment liked = new LikedFragment();
+                    liked.setArguments(likedBundle);
                     toolbarTitle.setText(R.string.app_name);
-                    loadFragment(new LikedFragment());
+                    loadFragment(liked);
                 }
                 else
                 {

@@ -39,6 +39,7 @@ public class Post extends AppCompatActivity {
         title = getIntent().getStringExtra("title");
         artUrl = getIntent().getStringExtra("artUrl");
         isArtist = getIntent().getBooleanExtra("isArtist", false);
+        artistProfile = getIntent().getStringExtra("artistProfile");
 
         profilePic = findViewById(R.id.profilePic);
         post = findViewById(R.id.art);
@@ -57,41 +58,6 @@ public class Post extends AppCompatActivity {
 
         checkLikedStatus();
         checkSaveStatus();
-
-        db.collection("users").whereEqualTo("username", artistUsername)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.getString("name") != null)
-                            {
-                                artistProfile = document.getString("profile");
-                            }
-                        }
-                    } else {
-                        // Handle errors
-                    }
-                });
-
-        db.collection("artwork")
-                .whereEqualTo("username", artistUsername)
-                .whereEqualTo("title", title)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.getString("title") != null)
-                            {
-                                description = document.getString("description");
-                                artLikeCount = document.getLong("likes").intValue();
-                                artCommentCount = document.getLong("comments").intValue();
-                                artSaveCount = document.getLong("saves").intValue();
-                            }
-                        }
-                    } else {
-                        // Handle errors
-                    }
-                });
 
         if (isLiked) {
             Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
@@ -112,17 +78,69 @@ public class Post extends AppCompatActivity {
             saveButton.setBackground(notSaved);
         }
 
+        db.collection("users").whereEqualTo("username", artistUsername)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.getString("name") != null)
+                            {
+                                artistProfile = document.getString("profile");
+
+                                if (artistProfile != null)
+                                {
+                                    Picasso.get().load(artistProfile).placeholder(R.drawable.default_profile).into(profilePic);
+                                }
+                            }
+                        }
+                    } else {
+                        // Handle errors
+                    }
+                });
+
+        db.collection("artwork")
+                .whereEqualTo("username", artistUsername)
+                .whereEqualTo("title", title)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.getString("title") != null)
+                            {
+                                description = document.getString("description");
+                                artLikeCount = document.getLong("likes").intValue();
+                                artCommentCount = document.getLong("comments").intValue();
+                                artSaveCount = document.getLong("saves").intValue();
+
+                                if (description != null)
+                                {
+                                    artDescription.setText(description);
+                                }
+                                if (artLikeCount != 0)
+                                {
+                                    likes.setText(String.valueOf(artLikeCount));
+                                }
+                                if (artCommentCount != 0)
+                                {
+                                    comments.setText(String.valueOf(artCommentCount));
+                                }
+                                if (artSaveCount != 0)
+                                {
+                                    saves.setText(String.valueOf(artSaveCount));
+                                }
+                            }
+                        }
+                    } else {
+                        // Handle errors
+                    }
+                });
+
         if (artistUsername != null)
         {
             tvUsername.setText(artistUsername);
         }
 
-        if (!Objects.equals(artistProfile, "null"))
-        {
-            Picasso.get().load(artistProfile).placeholder(R.drawable.default_profile).into(profilePic);
-        }
-
-        if (!Objects.equals(artUrl, "null"))
+        if (artUrl != null)
         {
             Picasso.get().load(artUrl).placeholder(R.drawable.default_art).into(post);
         }
@@ -130,22 +148,6 @@ public class Post extends AppCompatActivity {
         if (title != null)
         {
             artTitle.setText(title);
-        }
-        if (description != null)
-        {
-            artDescription.setText(description);
-        }
-        if (artLikeCount != 0)
-        {
-            likes.setText(String.valueOf(artLikeCount));
-        }
-        if (artCommentCount != 0)
-        {
-            comments.setText(String.valueOf(artCommentCount));
-        }
-        if (artSaveCount != 0)
-        {
-            saves.setText(String.valueOf(artSaveCount));
         }
 
         likeButton.setOnClickListener(new View.OnClickListener() {

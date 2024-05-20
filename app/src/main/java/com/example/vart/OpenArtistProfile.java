@@ -54,24 +54,29 @@ public class OpenArtistProfile extends AppCompatActivity {
         follow = findViewById(R.id.follow);
         toolbarTitle = findViewById(R.id.toolbarTitle);
 
+        bio.setVisibility(View.GONE);
+
         db = FirebaseFirestore.getInstance();
 
         checkFollowingStatus();
 
         db.collection("users").whereEqualTo("username", artistUsername)
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             if (document.getString("name") != null) {
                                 artistName = document.getString("name");
                                 artistFollowingCount = document.getLong("following").intValue();
+
+                                if (artistName != null) {
+                                    fullName.setText(artistName);
+                                }
+                                if (artistFollowingCount != 0) {
+                                    followingCount.setText(String.valueOf(artistFollowingCount));
+                                }
                             }
                         }
-                    } else {
-                        // Handle errors
-                    }
-                });
+                    });
 
         db.collection("artist").whereEqualTo("username", artistUsername)
                 .get()
@@ -79,8 +84,20 @@ public class OpenArtistProfile extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (document.getString("username") != null) {
+                                bioText = document.getString("bio");
                                 artistFollowerCount = document.getLong("followers").intValue();
                                 artistArtCount = document.getLong("arts").intValue();
+
+                                if (artistArtCount != 0) {
+                                    artCount.setText(String.valueOf(artistArtCount));
+                                }
+                                if (artistFollowerCount != 0) {
+                                    followerCount.setText(String.valueOf(artistFollowerCount));
+                                }
+                                if (!bioText.equals("null")) {
+                                    artistBio.setText(bioText);
+                                    bio.setVisibility(View.VISIBLE);
+                                }
                             }
                         }
                     } else {
@@ -90,30 +107,14 @@ public class OpenArtistProfile extends AppCompatActivity {
 
         toolbarTitle.setText(artistUsername);
 
-        if (artistName != null) {
-            fullName.setText(artistName);
-        }
-
         if (!Objects.equals(profile, "null")) {
             Picasso.get().load(profile).placeholder(R.drawable.default_profile).into(profilePic);
         }
 
-        if (!bioText.equals("null")) {
-            artistBio.setText(bioText);
-            bio.setVisibility(View.VISIBLE);
-        } else {
-            bio.setVisibility(View.GONE);
-        }
+//        else {
+//            bio.setVisibility(View.GONE);
+//        }
 
-        if (artistFollowerCount != 0) {
-            followerCount.setText(String.valueOf(artistFollowerCount));
-        }
-        if (artistFollowingCount != 0) {
-            followingCount.setText(String.valueOf(artistFollowingCount));
-        }
-        if (artistArtCount != 0) {
-            artCount.setText(String.valueOf(artistArtCount));
-        }
 
         follow.setOnClickListener(v -> {
             if (isFollowing) {

@@ -64,7 +64,6 @@ public class TopArtistsAdapter extends RecyclerView.Adapter<TopArtistsAdapter.To
         public void bind(TopArtist artist, OnArtistClickListener listener) {
             name.setText(artist.getusername());
             Picasso.get().load(artist.getImage()).into(imageView);
-
             itemView.setOnClickListener(v -> listener.onArtistClick(artist));
         }
 

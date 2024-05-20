@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             // Extract the data for each art piece
-                            String imageurl = document.getString("imageurl");
+                            String imageurl = document.getString("imageUrl");
                             String title = document.getString("title");
                             String username = document.getString("username");
                             int likes = document.getLong("likes").intValue();
@@ -175,9 +175,7 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
     }
 
     public void onArtClick(TrendingArts art) {
-
-        Toast.makeText(getContext(), art.getusername(), Toast.LENGTH_SHORT).show();
-       Intent intent = new Intent(requireContext(), Post.class);
+        Intent intent = new Intent(requireContext(), Post.class);
        intent.putExtra("username", username);
        intent.putExtra("artistUsername", art.getusername());
        intent.putExtra("title", art.getTitle());
@@ -192,7 +190,6 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
         intent.putExtra("artistUsername", artist.getusername());
         intent.putExtra("profile", artist.getImage());
         startActivity(intent);
-        Toast.makeText(getContext(), artist.getusername(), Toast.LENGTH_SHORT).show();
     }
 
     public void onFollowedClick(FollowedArtist artist)
@@ -202,8 +199,6 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
         intent.putExtra("artistUsername", artist.getUsername());
         intent.putExtra("profile", artist.getImage());
         startActivity(intent);
-
-        Toast.makeText(getContext(), artist.getUsername(), Toast.LENGTH_SHORT).show();
     }
 }
 

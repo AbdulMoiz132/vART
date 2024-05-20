@@ -75,7 +75,7 @@ public class UploadArt extends AppCompatActivity {
 
     private void uploadArtwork() {
         progressDialog = new ProgressDialog(UploadArt.this);
-        progressDialog.setTitle("Updating Art...");
+        progressDialog.setTitle("Uploading Art...");
         progressDialog.show();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA);
@@ -95,7 +95,7 @@ public class UploadArt extends AppCompatActivity {
 
                                 Map<String, Object> artData = new HashMap<>();
                                 artData.put("username", username);
-                                artData.put("artUrl", downloadUrl);
+                                artData.put("imageUrl", downloadUrl);
                                 artData.put("artTitle", title);
                                 artData.put("description", description);
                                 artData.put("likes", 0);

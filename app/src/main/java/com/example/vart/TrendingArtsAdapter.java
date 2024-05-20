@@ -55,13 +55,12 @@ public class TrendingArtsAdapter extends RecyclerView.Adapter<TrendingArtsAdapte
 
         public TrendingArtsViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.ivLiked);
+            imageView = itemView.findViewById(R.id.ivArt);
             textViewTitle = itemView.findViewById(R.id.title);
         }
 
         public void bind(TrendingArts trendingArt, OnArtClickListener listener) {
             textViewTitle.setText(trendingArt.getTitle());
-            Glide.with(itemView.getContext()).load(trendingArt.getImage()).into(imageView);
             Picasso.get().load(trendingArt.getImage()).into(imageView);
             itemView.setOnClickListener(v -> listener.onArtClick(trendingArt));
         }

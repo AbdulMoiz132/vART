@@ -49,4 +49,6 @@
     <string name="select_art_to_upload">Select art to upload</string>
     <string name="title">Title</string>
     <string name="like">like</string>
+    <string name="save">save</string>
+    <string name="comment">comment</string>
 </resources>
