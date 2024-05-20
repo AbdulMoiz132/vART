@@ -132,6 +132,11 @@ public class UploadArt extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(UploadArt.this,"Failed to upload art",Toast.LENGTH_SHORT).show();
+                            }
                         });
                     }
                 }).addOnFailureListener(new OnFailureListener() {
