@@ -9,20 +9,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class LikedAdapter extends RecyclerView.Adapter<LikedAdapter.LikedViewHolder> {
-    private final ArrayList<LikedArts> likedArtsList;
+    private final ArrayList<Arts> likedArtsList;
     private final OnLikedArtClickListener listener;
 
     public interface OnLikedArtClickListener {
-        void onLikedArtClick(LikedArts art);
+        void onLikedArtClick(Arts art);
     }
 
-    public LikedAdapter(ArrayList<LikedArts> likedArtsList, OnLikedArtClickListener listener) {
+    public LikedAdapter(ArrayList<Arts> likedArtsList, OnLikedArtClickListener listener) {
         this.likedArtsList = likedArtsList;
         this.listener = listener;
     }
@@ -36,7 +35,7 @@ public class LikedAdapter extends RecyclerView.Adapter<LikedAdapter.LikedViewHol
 
     @Override
     public void onBindViewHolder(@NonNull LikedViewHolder holder, int position) {
-        LikedArts likedArt = likedArtsList.get(position);
+        Arts likedArt = likedArtsList.get(position);
         holder.bind(likedArt, listener);
     }
 
@@ -55,7 +54,7 @@ public class LikedAdapter extends RecyclerView.Adapter<LikedAdapter.LikedViewHol
             textViewTitle = itemView.findViewById(R.id.title);
         }
 
-        public void bind(LikedArts likedArt, OnLikedArtClickListener listener) {
+        public void bind(Arts likedArt, OnLikedArtClickListener listener) {
             Picasso.get().load(likedArt.getImage()).into(imageView);
             itemView.setOnClickListener(v -> listener.onLikedArtClick(likedArt));
         }

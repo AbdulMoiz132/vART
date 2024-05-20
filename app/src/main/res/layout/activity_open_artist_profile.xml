@@ -237,8 +237,29 @@
             android:layout_weight="1"
             android:backgroundTint="@color/white"
             android:background="?android:attr/listDivider" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ArtsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tvNoArts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:layout_gravity="center"
+                android:text="No Arts Posted" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
+
 
 </ScrollView>
