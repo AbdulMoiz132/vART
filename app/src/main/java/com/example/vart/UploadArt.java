@@ -37,7 +37,7 @@ public class UploadArt extends AppCompatActivity {
     TextView selectArt;
     Button uploadArt;
     ProgressDialog progressDialog;
-    String username;
+    String username, artTitle, artDescription, downloadUrl;
     StorageReference storageReference;
     FirebaseFirestore db;
     Uri imageUri;
@@ -67,6 +67,8 @@ public class UploadArt extends AppCompatActivity {
         uploadArt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                artTitle = title.getText().toString().trim();
+                artDescription = description.getText().toString().trim();
                 uploadArtwork();
             }
         });
@@ -91,15 +93,16 @@ public class UploadArt extends AppCompatActivity {
                         artUrlTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                String downloadUrl = uri.toString();
+                                downloadUrl = uri.toString();
 
                                 Map<String, Object> artData = new HashMap<>();
                                 artData.put("username", username);
                                 artData.put("imageUrl", downloadUrl);
-                                artData.put("artTitle", title);
-                                artData.put("description", description);
+                                artData.put("title", artTitle);
+                                artData.put("description", artDescription);
                                 artData.put("likes", 0);
                                 artData.put("comments", 0);
+                                artData.put("saves", 0);
 
                                 db.collection("artwork").document(artName)
                                         .set(artData)
@@ -122,6 +125,11 @@ public class UploadArt extends AppCompatActivity {
                                                             }
                                                         });
                                             }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
                                         });
 
                                 art.setImageURI(null);
@@ -136,6 +144,9 @@ public class UploadArt extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Toast.makeText(UploadArt.this,"Failed to upload art",Toast.LENGTH_SHORT).show();
+
+                                setResult(RESULT_OK);
+                                finish();
                             }
                         });
                     }

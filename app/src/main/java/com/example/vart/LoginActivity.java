@@ -83,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     if (!queryDocumentSnapshots.isEmpty()) {
                                         progressDialog.dismiss();
-                                        Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                         intent.putExtra("username", user_name);
                                         startActivity(intent);

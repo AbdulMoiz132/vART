@@ -35,9 +35,6 @@
             android:name=".ChangePass"
             android:exported="false" />
         <activity
-            android:name=".EditUsername"
-            android:exported="false" />
-        <activity
             android:name=".EditName"
             android:exported="false" />
         <activity
