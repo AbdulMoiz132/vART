@@ -101,7 +101,7 @@ public class UploadArt extends AppCompatActivity {
                                 artData.put("likes", 0);
                                 artData.put("comments", 0);
 
-                                db.collection("artist").document(artName)
+                                db.collection("artwork").document(artName)
                                         .set(artData)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override

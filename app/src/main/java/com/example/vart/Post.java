@@ -1,5 +1,8 @@
 package com.example.vart;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -8,9 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.squareup.picasso.Picasso;
@@ -187,6 +193,14 @@ public class Post extends AppCompatActivity {
             }
         });
 
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = getBuilder();
+                builder.show();
+            }
+        });
+
     }
 
     private void checkLikedStatus() {
@@ -244,7 +258,6 @@ public class Post extends AppCompatActivity {
         db.collection("liked").add(liker)
                 .addOnSuccessListener(aVoid -> {
                     isLiked = true;
-                    Toast.makeText(Post.this, "liker added", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to add liker: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -279,7 +292,6 @@ public class Post extends AppCompatActivity {
                         document.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
                                     isLiked = false;
-                                    Toast.makeText(Post.this, "Unliked art", Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(Post.this, "Failed to unlike art: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -315,8 +327,8 @@ public class Post extends AppCompatActivity {
         db.collection("saved").add(saver)
                 .addOnSuccessListener(aVoid -> {
                     isSaved = true;
-                    Toast.makeText(Post.this, "saver added", Toast.LENGTH_SHORT).show();
-                })
+                    Toast.makeText(Post.this, "Art added to collection", Toast.LENGTH_SHORT).show();
+                    })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Post.this, "Failed to add saver: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
@@ -350,7 +362,7 @@ public class Post extends AppCompatActivity {
                         document.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
                                     isSaved = false;
-                                    Toast.makeText(Post.this, "Unsaved art", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Post.this, "Art removed from collection", Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(Post.this, "Failed to unsave art: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -359,4 +371,98 @@ public class Post extends AppCompatActivity {
                 });
     }
 
+    private void deletePost()
+    {
+        ProgressDialog progressDialog = new ProgressDialog(Post.this);
+        progressDialog.setTitle("Deleting Art...");
+        progressDialog.show();
+
+        db.collection("artwork")
+                .whereEqualTo("title", title)
+                .whereEqualTo("artist", artistUsername)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        document.getReference().delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(Post.this, "Art deleted from artwork collection", Toast.LENGTH_SHORT).show();
+
+                                    db.collection("artist")
+                                            .whereEqualTo("username", artistUsername)
+                                            .get()
+                                            .addOnSuccessListener(queryDocSnapshots -> {
+                                                for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+
+                                                    int currentArts = doc.getLong("arts").intValue();
+                                                    int updatedArts = currentArts - 1;
+
+                                                    doc.getReference().update("arts", updatedArts);
+                                                }
+                                            });
+
+                                    db.collection("Liked")
+                                            .whereEqualTo("title", title)
+                                            .whereEqualTo("artist", artistUsername)
+                                            .get()
+                                            .addOnSuccessListener(queryDocSnapshots -> {
+                                                for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+                                                    doc.getReference().delete()
+                                                            .addOnSuccessListener(bVoid -> {
+                                                                Toast.makeText(Post.this, "Deleted concerned info from the liked collection", Toast.LENGTH_SHORT).show();
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                Toast.makeText(Post.this, "Failed to delete from liked collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            });
+                                                }
+                                            });
+
+                                    db.collection("saved")
+                                            .whereEqualTo("title", title)
+                                            .whereEqualTo("artist", artistUsername)
+                                            .get()
+                                            .addOnSuccessListener(queryDocSnapshots -> {
+                                                for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+                                                    doc.getReference().delete()
+                                                            .addOnSuccessListener(bVoid -> {
+                                                                Toast.makeText(Post.this, "Deleted concerned info from the saved collection", Toast.LENGTH_SHORT).show();
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                Toast.makeText(Post.this, "Failed to to delete from saved collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            });
+                                                }
+                                            });
+
+                                    progressDialog.dismiss();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(Post.this, "Failed to delete from artwork collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                });
+                    }
+                });
+    }
+
+    @NonNull
+    private AlertDialog.Builder getBuilder() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Post.this);
+        builder.setTitle("Delete Post");
+        builder.setMessage("Are you sure you want to delete the post?");
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Intent intent = new Intent(Post.this, getIntent());
+                deletePost();
+                Toast.makeText(Post.this, "Artwork deleted", Toast.LENGTH_SHORT).show();
+                //startActivity(intent);
+                finish();
+            }
+        });
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        return builder;
+    }
 }

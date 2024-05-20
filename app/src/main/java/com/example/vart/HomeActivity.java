@@ -109,7 +109,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        loadFragment(new HomeFragment());
+        HomeFragment home = new HomeFragment();
+        home.setArguments(homeBundle);
+        toolbarTitle.setText(R.string.app_name);
+        loadFragment(home);
     }
 
     private void loadFragment(Fragment fragment)

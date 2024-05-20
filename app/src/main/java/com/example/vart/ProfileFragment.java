@@ -89,15 +89,12 @@ public class ProfileFragment extends Fragment {
                             if (document.getString("name") != null)
                             {
                                 following = document.getLong("following").intValue();
-
                                 if (following != 0)
                                 {
                                     followingCount.setText(String.valueOf(following));
                                 }
                             }
                         }
-                    } else {
-                        // Handle errors
                     }
                 });
 
@@ -108,12 +105,12 @@ public class ProfileFragment extends Fragment {
 
         if (isArtist) {
 
-            db.collection("users").whereEqualTo("username", username)
+            db.collection("artist").whereEqualTo("username", username)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (document.getString("name") != null)
+                                if (document.getString("username") != null)
                                 {
                                     artistFollowerCount = document.getLong("followers").intValue();
                                     artistArtCount = document.getLong("arts").intValue();
