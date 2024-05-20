@@ -56,7 +56,7 @@ public class FollowedArtistsAdapter extends RecyclerView.Adapter<FollowedArtists
 
         public void bind(FollowedArtist followedArtist, OnFollowedClickListener listener) {
             textViewName.setText(followedArtist.getUsername());
-            Picasso.get().load(followedArtist.getImage()).into(imageView);
+            Picasso.get().load(followedArtist.getImage()).placeholder(R.drawable.default_profile).into(imageView);
             itemView.setOnClickListener(v -> listener.onFollowedClick(followedArtist));
         }
     }

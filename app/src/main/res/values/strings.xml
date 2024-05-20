@@ -51,4 +51,6 @@
     <string name="like">like</string>
     <string name="save">save</string>
     <string name="comment">comment</string>
+    <string name="no_arts_posted">No arts posted</string>
+    <string name="no_arts_liked_yet">No arts liked yet</string>
 </resources>

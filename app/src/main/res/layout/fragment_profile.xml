@@ -281,6 +281,20 @@
                 app:drawableEndCompat="@drawable/edit_button"
                 android:drawablePadding="5dp"/>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ArtRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tvNoArt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:text="@string/no_arts_posted" />
+
         </LinearLayout>
 
 </ScrollView>

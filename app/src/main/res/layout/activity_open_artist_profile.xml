@@ -244,7 +244,7 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ArtsRecyclerView"
+                android:id="@+id/ArtRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
