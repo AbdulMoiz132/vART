@@ -217,7 +217,6 @@ public class HomeFragment extends Fragment implements TrendingArtsAdapter.OnArtC
        intent.putExtra("artistUsername", art.getusername());
        intent.putExtra("title", art.getTitle());
        intent.putExtra("artUrl", art.getImage());
-       intent.putExtra("SOURCE", "HOME");
        startActivity(intent);
     }
 

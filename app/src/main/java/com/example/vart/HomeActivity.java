@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView toolbarTitle;
     boolean isArtist;
-    Bundle profileBundle, homeBundle, likedBundle;
+    Bundle profileBundle, homeBundle, likedBundle, searchBundle;
     FirebaseFirestore db;
     private static final int EDIT_NAME_REQUEST = 1;
     private static final int EDIT_BIO_REQUEST = 2;
@@ -66,29 +66,12 @@ public class HomeActivity extends AppCompatActivity {
         likedBundle = new Bundle();
         likedBundle.putString("username", username);
 
+        searchBundle = new Bundle();
+        searchBundle.putString("username", username);
+
         isUserArtist();
 
         getNameAndProfile();
-
-        String fragment = getIntent().getStringExtra("FRAGMENT");
-        if (fragment != null) {
-            switch (fragment) {
-                case "HOME":
-                    HomeFragment home = new HomeFragment();
-                    home.setArguments(homeBundle);
-                    toolbarTitle.setText(R.string.app_name);
-                    loadFragment(home);
-                    break;
-                case "PROFILE":
-                    isUserArtist();
-                    getNameAndProfile();
-                    ProfileFragment profile = new ProfileFragment();
-                    profile.setArguments(profileBundle);
-                    toolbarTitle.setText(username);
-                    loadFragment(profile);
-                    break;
-            }
-        }
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -105,7 +88,10 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 else if (itemId == R.id.navSearch)
                 {
-                    loadFragment(new SearchFragment());
+                    SearchFragment search = new SearchFragment();
+                    search.setArguments(searchBundle);
+                    toolbarTitle.setText(R.string.app_name);
+                    loadFragment(search);
                 }
                 else if (itemId == R.id.navLiked)
                 {

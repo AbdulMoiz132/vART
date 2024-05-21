@@ -81,13 +81,11 @@ public class Post extends AppCompatActivity {
                     isLiked = !queryDocumentSnapshots.isEmpty();
 
                     if (isLiked) {
-                        Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
-                        likeButton.setBackground(liked);
+                        likeButton.setImageResource(R.drawable.filled_like);
                     }
                     else
                     {
-                        Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
-                        likeButton.setBackground(notLiked);
+                        likeButton.setImageResource(R.drawable.hollow_like);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -105,13 +103,11 @@ public class Post extends AppCompatActivity {
 
                     if (isSaved)
                     {
-                        Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
-                        saveButton.setBackground(saved);
+                        saveButton.setImageResource(R.drawable.filled_save);
                     }
                     else
                     {
-                        Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
-                        saveButton.setBackground(notSaved);
+                        saveButton.setImageResource(R.drawable.save);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -134,8 +130,6 @@ public class Post extends AppCompatActivity {
                                 }
                             }
                         }
-                    } else {
-                        // Handle errors
                     }
                 });
 
@@ -230,8 +224,7 @@ public class Post extends AppCompatActivity {
     }
 
     private void likeArt() {
-        Drawable liked = ContextCompat.getDrawable(this, R.drawable.filled_like);
-        likeButton.setBackground(liked);
+        likeButton.setImageResource(R.drawable.filled_like);
 
         db.collection("artwork")
                 .whereEqualTo("username", artistUsername)
@@ -263,8 +256,7 @@ public class Post extends AppCompatActivity {
     }
 
     private void unlikeArt() {
-        Drawable notLiked = ContextCompat.getDrawable(this, R.drawable.hollow_like);
-        likeButton.setBackground(notLiked);
+        likeButton.setImageResource(R.drawable.hollow_like);
 
         db.collection("artwork")
                 .whereEqualTo("username", artistUsername)
@@ -299,8 +291,7 @@ public class Post extends AppCompatActivity {
     }
 
     private void saveArt() {
-        Drawable saved = ContextCompat.getDrawable(this, R.drawable.filled_save);
-        saveButton.setBackground(saved);
+        saveButton.setImageResource(R.drawable.filled_save);
 
         db.collection("artwork")
                 .whereEqualTo("username", artistUsername)
@@ -333,8 +324,7 @@ public class Post extends AppCompatActivity {
     }
 
     private void unsaveArt() {
-        Drawable notSaved = ContextCompat.getDrawable(this, R.drawable.save);
-        saveButton.setBackground(notSaved);
+        saveButton.setImageResource(R.drawable.save);
 
         db.collection("artwork")
                 .whereEqualTo("username", artistUsername)
@@ -369,119 +359,58 @@ public class Post extends AppCompatActivity {
                 });
     }
 
-    private void deletePost() {
+    private void deletePost()
+    {
         ProgressDialog progressDialog = new ProgressDialog(Post.this);
-        progressDialog.setTitle("Deleting Art...");
+        progressDialog.setMessage("Deleting...");
         progressDialog.show();
 
         db.collection("artwork")
                 .whereEqualTo("title", title)
-                .whereEqualTo("artist", artistUsername)
+                .whereEqualTo("username", artistUsername)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            document.getReference().delete()
-                                    .addOnSuccessListener(aVoid -> {
-                                        // Update artist collection and delete from other collections
-                                        updateArtistCollection();
-                                        deleteFromLikedCollection();
-                                        deleteFromSavedCollection(progressDialog);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(Post.this, "Failed to delete from artwork collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        progressDialog.dismiss();
-                                    });
-                        }
-                    } else {
-                        Toast.makeText(Post.this, "No matching artwork found", Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        document.getReference().delete()
+                                .addOnSuccessListener(aVoid -> {
+                            progressDialog.dismiss();
+                        });
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(Post.this, "Failed to fetch artwork collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
                 });
-    }
 
-    private void updateArtistCollection() {
         db.collection("artist")
                 .whereEqualTo("username", artistUsername)
                 .get()
                 .addOnSuccessListener(queryDocSnapshots -> {
                     for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+
                         int currentArts = doc.getLong("arts").intValue();
                         int updatedArts = currentArts - 1;
+
                         doc.getReference().update("arts", updatedArts);
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(Post.this, "Failed to update artist art count: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
-    }
 
-    private void deleteFromLikedCollection() {
-        db.collection("Liked")
+        db.collection("liked")
                 .whereEqualTo("title", title)
                 .whereEqualTo("artist", artistUsername)
                 .get()
-                .addOnSuccessListener(queryDocSnapshots -> {
-                    for (QueryDocumentSnapshot doc : queryDocSnapshots) {
-                        doc.getReference().delete()
-                                .addOnSuccessListener(bVoid -> {
-                                    Toast.makeText(Post.this, "Deleted info from liked collection", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(Post.this, "Failed to delete from liked collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        document.getReference().delete();
                     }
                 });
-    }
 
-    private void deleteFromSavedCollection(ProgressDialog progressDialog) {
         db.collection("saved")
                 .whereEqualTo("title", title)
                 .whereEqualTo("artist", artistUsername)
                 .get()
-                .addOnSuccessListener(queryDocSnapshots -> {
-                    for (QueryDocumentSnapshot doc : queryDocSnapshots) {
-                        doc.getReference().delete()
-                                .addOnSuccessListener(bVoid -> {
-                                    Toast.makeText(Post.this, "Deleted info from saved collection", Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                    redirectToSource();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(Post.this, "Failed to delete from saved collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                });
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        document.getReference().delete();
                     }
                 });
-    }
 
-    private void redirectToSource() {
-        switch (source) {
-            case "HOME":
-                // Redirect back to Home Fragment
-                Intent homeIntent = new Intent(Post.this, HomeActivity.class);
-                homeIntent.putExtra("FRAGMENT", "HOME");
-                startActivity(homeIntent);
-                break;
-            case "PROFILE":
-                // Redirect back to Profile Fragment
-                Intent profileIntent = new Intent(Post.this, HomeActivity.class);
-                profileIntent.putExtra("FRAGMENT", "PROFILE");
-                startActivity(profileIntent);
-                break;
-            case "ARTIST_PROFILE":
-                // Redirect back to OpenArtistProfile Activity
-                Intent artistProfileIntent = new Intent(Post.this, OpenArtistProfile.class);
-                startActivity(artistProfileIntent);
-                break;
-            default:
-                finish();
-        }
-        finish();
     }
 
     @NonNull
@@ -492,9 +421,9 @@ public class Post extends AppCompatActivity {
         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Post.this, HomeActivity.class);
                 deletePost();
-                Toast.makeText(Post.this, "Artwork deleted", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Post.this, HomeActivity.class);
+                Toast.makeText(Post.this, "Art deleted", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
                 finish();
             }

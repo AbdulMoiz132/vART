@@ -59,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                progressDialog.show();
                 user_name = username.getText().toString().trim();
                 pass = password.getText().toString();
 
@@ -75,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    progressDialog.show();
                     db.collection("users").whereEqualTo("username", user_name)
                             .whereEqualTo("password", pass)
                             .get()

@@ -1,6 +1,5 @@
 package com.example.vart;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -290,11 +289,7 @@ public class ProfileFragment extends Fragment implements OpenProfileAdapter.OnAr
         if (itemId == R.id.editBio) {
             Intent intent = new Intent(getContext(), EditBio.class);
             intent.putExtra("username", username);
-            startActivityForResult(intent, EDIT_BIO_REQUEST);
-            
-            getParentFragmentManager().beginTransaction()
-                    .remove(ProfileFragment.this)
-                    .commit();
+            startActivity(intent);
         }
         if (itemId == R.id.changePass)
         {
@@ -309,7 +304,7 @@ public class ProfileFragment extends Fragment implements OpenProfileAdapter.OnAr
         }
         if (itemId == R.id.deleteAcc)
         {
-            Toast.makeText(getContext(), "Account deleted", Toast.LENGTH_SHORT).show();
+            showDeleteAccountDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -344,8 +339,122 @@ public class ProfileFragment extends Fragment implements OpenProfileAdapter.OnAr
         intent.putExtra("artistUsername", art.getUsername());
         intent.putExtra("title", art.getTitle());
         intent.putExtra("artUrl", art.getImage());
-        intent.putExtra("SOURCE", "PROFILE");
         startActivity(intent);
     }
+
+    private void deleteAcc() {
+        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Deleting Account...");
+        progressDialog.show();
+
+        db.collection("users")
+                .whereEqualTo("username", username)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        document.getReference().delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    deleteFromArtistCollection();
+                                    user_deleteFromLikedCollection();
+                                    artist_deleteFromLikedCollection();
+                                    user_deleteFromSavedCollection();
+                                    artist_deleteFromSavedCollection(progressDialog);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getActivity(), "Could not remove user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getActivity(), "Failed to fetch artwork collection: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                });
+    }
+
+    private void deleteFromArtistCollection() {
+        db.collection("artist")
+                .whereEqualTo("username", username)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        document.getReference().delete();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getActivity(), "Failed to update artist art count: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void artist_deleteFromLikedCollection() {
+        db.collection("Liked")
+                .whereEqualTo("artist", username)
+                .get()
+                .addOnSuccessListener(queryDocSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+                        doc.getReference().delete();
+                    }
+                });
+    }
+
+    private void user_deleteFromLikedCollection() {
+        db.collection("Liked")
+                .whereEqualTo("user", username)
+                .get()
+                .addOnSuccessListener(queryDocSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+                        doc.getReference().delete();
+                    }
+                });
+    }
+
+    private void user_deleteFromSavedCollection() {
+        db.collection("saved")
+                .whereEqualTo("user", username)
+                .get()
+                .addOnSuccessListener(queryDocSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+                        doc.getReference().delete();
+                    }
+                });
+    }
+
+    private void artist_deleteFromSavedCollection(ProgressDialog progressDialog) {
+        db.collection("saved")
+                .whereEqualTo("artist", username)
+                .get()
+                .addOnSuccessListener(queryDocSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocSnapshots) {
+                        doc.getReference().delete();
+                    }
+                });
+    }
+
+    private void showDeleteAccountDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete Account");
+        builder.setMessage("Are you sure you want to delete your account? This action cannot be undone.");
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Call the deleteAcc method
+                deleteAcc();
+
+                progressDialog.dismiss();
+
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
 
 }

@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/custom_edit_text"
+            android:background="@drawable/et_upload_art"
             android:drawableStart="@drawable/pencil"
             android:drawableTint="@color/black"
             android:drawablePadding="10dp"
