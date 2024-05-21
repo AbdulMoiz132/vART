@@ -96,6 +96,10 @@ public class Signup extends AppCompatActivity {
                 {
                     rePass.setError("You must re-enter your password to register");
                 }
+                else if (!(mail.contains(" ") | mail.contains("@") | mail.contains(".")))
+                {
+                    email.setError("Invalid email address");
+                }
                 else if (!re_Pass.equals(pass)) {
                     rePass.setError("Passwords do not match");
                 }
